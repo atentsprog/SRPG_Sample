@@ -29,57 +29,6 @@ public static class PathFinding2D
         return astar(from, to, map, passableValues, getDistance, getNeighbors);
     }
 
-    /**
-     * find a path in hexagonal grid tilemaps (when grid rows are staggered with each other)
-     */
-    public static List<Vector2Int> find6X(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
-    {
-        Func<Vector2Int, Vector2Int, float> getDistance = delegate (Vector2Int a, Vector2Int b)
-        {
-            float xDistance = Mathf.Abs(a.x - b.x);
-            float yDistance = Mathf.Abs(a.y - b.y) * Mathf.Sqrt(3);
-            return xDistance * xDistance + yDistance * yDistance;
-        };
-        Func<Vector2Int, List<Vector2Int>> getNeighbors = delegate (Vector2Int pos)
-        {
-            var neighbors = new List<Vector2Int>();
-            neighbors.Add(new Vector2Int(pos.x + 1, pos.y + 1));
-            neighbors.Add(new Vector2Int(pos.x - 1, pos.y + 1));
-            neighbors.Add(new Vector2Int(pos.x + 1, pos.y - 1));
-            neighbors.Add(new Vector2Int(pos.x - 1, pos.y - 1));
-            neighbors.Add(new Vector2Int(pos.x - 2, pos.y));
-            neighbors.Add(new Vector2Int(pos.x + 2, pos.y));
-            return neighbors;
-        };
-        return astar(from, to, map, passableValues, getDistance, getNeighbors);
-    }
-
-    /**
-     * find a path in hexagonal grid tilemaps (when grid columns are staggered with each other)
-     */
-    public static List<Vector2Int> find6Y(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
-    {
-        Func<Vector2Int, Vector2Int, float> getDistance = delegate (Vector2Int a, Vector2Int b)
-        {
-            float xDistance = Mathf.Abs(a.x - b.x) * Mathf.Sqrt(3);
-            float yDistance = Mathf.Abs(a.y - b.y);
-            return xDistance * xDistance + yDistance * yDistance;
-        };
-        Func<Vector2Int, List<Vector2Int>> getNeighbors = delegate (Vector2Int pos)
-        {
-            var neighbors = new List<Vector2Int>();
-            neighbors.Add(new Vector2Int(pos.x + 1, pos.y + 1));
-            neighbors.Add(new Vector2Int(pos.x - 1, pos.y + 1));
-            neighbors.Add(new Vector2Int(pos.x + 1, pos.y - 1));
-            neighbors.Add(new Vector2Int(pos.x - 1, pos.y - 1));
-            neighbors.Add(new Vector2Int(pos.x, pos.y - 2));
-            neighbors.Add(new Vector2Int(pos.x, pos.y + 2));
-            return neighbors;
-        };
-        return astar(from, to, map, passableValues, getDistance, getNeighbors);
-    }
-
-
     static List<Vector2Int> astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues,
                       Func<Vector2Int, Vector2Int, float> getDistance, Func<Vector2Int, List<Vector2Int>> getNeighbors)
     {

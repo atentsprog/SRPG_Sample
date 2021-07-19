@@ -46,6 +46,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         else
         {
             Player.SelectPlayer.PlayAnimation("Walk");
+            FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
             foreach (var item in path)
             {
                 Vector3 playerNewPos = new Vector3(item.x, 0, item.y);
@@ -55,6 +56,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
                 yield return new WaitForSeconds(moveTimePerUnit);
             }
             Player.SelectPlayer.PlayAnimation("Idle");
+            FollowTarget.Instance.SetTarget(null);
         }
     }
     public Ease moveEase = Ease.InBounce;

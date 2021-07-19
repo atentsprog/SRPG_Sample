@@ -13,7 +13,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
 
     internal void OnTouch(Vector3 position)
     {
-        Vector2Int findPos = new Vector2Int((int)position.x, (int)position.z);
+        Vector2Int findPos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         FindPath(findPos);
     }
 
@@ -37,8 +37,8 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
             Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z);
             map[intPos] = (int)item.blockType;
         }
-        playerPos.x = (int)player.position.x;
-        playerPos.y = (int)player.position.z;
+        playerPos.x = Mathf.RoundToInt(player.position.x);
+        playerPos.y = Mathf.RoundToInt(player.position.z);
 
         List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
         if (path.Count == 0)

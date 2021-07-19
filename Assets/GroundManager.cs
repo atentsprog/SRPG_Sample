@@ -11,6 +11,35 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
     public List<int> passableValues = new List<int>();
     public Transform player;
 
+    public bool useDebugMode = true;
+    public GameObject debugTextPrefab;
+    new private void Awake()
+    {
+        base.Awake();
+        passableValues = new List<int>();
+        passableValues.Add((int)BlockType.Walkable);
+
+        // 자식의 모든 BlockInfo 찾자.
+        var blockInfos = GetComponentsInChildren<BlockInfo>();
+
+        // 맵을 채워 넣자.
+        foreach (var item in blockInfos)
+        {
+            var pos = item.transform.position;
+            Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z);
+            map[intPos] = (int)item.blockType;
+
+            if (useDebugMode)
+            {
+                string posString = $"{intPos.x}:{intPos.y}";
+                item.name = $"{item.name}:: {posString}";
+                GameObject textMeshGo = Instantiate(debugTextPrefab, item.transform);
+                textMeshGo.transform.localPosition = Vector3.zero;
+                TextMesh textMesh = textMeshGo.GetComponent<TextMesh>();
+                textMesh.text = posString;
+            }
+        }
+    }
     internal void OnTouch(Vector3 position)
     {
         Vector2Int findPos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
@@ -24,19 +53,6 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
     }
     IEnumerator FindPathCo(Vector2Int goalPos)
     {
-        passableValues = new List<int>();
-        passableValues.Add((int)BlockType.Walkable);
-
-        // 자식의 모든 BlockInfo 찾자.
-        var blockInfos = GetComponentsInChildren<BlockInfo>();
-
-        // 맵을 채워 넣자.
-        foreach(var item in blockInfos)
-        {
-            var pos = item.transform.position;
-            Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z);
-            map[intPos] = (int)item.blockType;
-        }
         playerPos.x = Mathf.RoundToInt(player.position.x);
         playerPos.y = Mathf.RoundToInt(player.position.z);
 

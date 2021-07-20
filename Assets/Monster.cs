@@ -7,6 +7,7 @@ public class Monster : MonoBehaviour
     Animator animator;
     void Start()
     {
-        //animator  get
+        animator = GetComponentInChildren<Animator>();
+        GroundManager.Instance.AddTileInfo(transform.position, BlockType.Enemy);
     }
 }

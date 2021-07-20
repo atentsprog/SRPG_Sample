@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     {
         SelectPlayer = this;
         animator = GetComponentInChildren<Animator>();
+        GroundManager.Instance.AddTileInfo(transform.position, BlockType.Player);
     }
 
     public void PlayAnimation(string nodeName)
@@ -41,10 +42,12 @@ public class Player : MonoBehaviour
     {
         var startPos = path[0];
         var destination = path[path.Count - 1];
-        GroundManager.Instance.map[startPos] &= ~BlockType.Player; // Bit연산 값 빼기
+        GroundManager.Instance.RemoveTileInfo(transform.position, BlockType.Player);
         PlayAnimation("Walk");
         FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
         SelectedTile.Instance.SetPosition(destination);
+
+        GroundManager.Instance.AddTileInfo(transform.position, BlockType.Player);
         foreach (var item in path)
         {
             Vector3 playerNewPos = new Vector3(item.x, 0, item.y);
@@ -57,7 +60,7 @@ public class Player : MonoBehaviour
         FollowTarget.Instance.SetTarget(null);
         SelectedTile.Instance.Hide();
 
-        GroundManager.Instance.map[destination] |= BlockType.Player;// Bit연산 값 더하기
+        GroundManager.Instance.AddTileInfo(transform.position, BlockType.Player);
     }
     public Ease moveEase = Ease.Linear;
     public float moveTimePerUnit = 0.3f;

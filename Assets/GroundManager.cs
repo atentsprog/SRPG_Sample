@@ -18,6 +18,19 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
    
     public bool useDebugMode = true;
     public GameObject debugTextPrefab;
+
+    internal void AddTileInfo(Vector3 position, BlockType blockInfo)
+    {
+        var pos = position.ToIntVector2();
+        map[pos] |= blockInfo;
+    }
+
+    internal void RemoveTileInfo(Vector3 position, BlockType blockInfo)
+    {
+        var pos = position.ToIntVector2();
+        map[pos] &= ~blockInfo;
+    }
+
     new private void Awake()
     {
         base.Awake();

@@ -10,27 +10,26 @@ public static class PathFinding2D
      */
     public static List<Vector2Int> find4(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
     {
-        Func<Vector2Int, Vector2Int, float> getDistance = delegate (Vector2Int a, Vector2Int b)
-        {
-            float xDistance = Mathf.Abs(a.x - b.x);
-            float yDistance = Mathf.Abs(a.y - b.y);
-            return xDistance * xDistance + yDistance * yDistance;
-        };
-        Func<Vector2Int, List<Vector2Int>> getNeighbors = delegate (Vector2Int pos)
-        {
-            var neighbors = new List<Vector2Int>();
-            neighbors.Add(new Vector2Int(pos.x, pos.y + 1));
-            neighbors.Add(new Vector2Int(pos.x, pos.y - 1));
-            neighbors.Add(new Vector2Int(pos.x + 1, pos.y));
-            neighbors.Add(new Vector2Int(pos.x - 1, pos.y));
-            return neighbors;
-        };
-
-        return astar(from, to, map, passableValues, getDistance, getNeighbors);
+        return astar(from, to, map, passableValues);
     }
 
-    static List<Vector2Int> astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues,
-                      Func<Vector2Int, Vector2Int, float> getDistance, Func<Vector2Int, List<Vector2Int>> getNeighbors)
+    static List<Vector2Int> GetNeighbors(Vector2Int pos)
+    {
+        var neighbors = new List<Vector2Int>();
+        neighbors.Add(new Vector2Int(pos.x, pos.y + 1));
+        neighbors.Add(new Vector2Int(pos.x, pos.y - 1));
+        neighbors.Add(new Vector2Int(pos.x + 1, pos.y));
+        neighbors.Add(new Vector2Int(pos.x - 1, pos.y));
+        return neighbors;
+    }
+    static float GetDistance(Vector2Int a, Vector2Int b)
+    {
+        float xDistance = a.x - b.x;
+        float yDistance = a.y - b.y;
+        return xDistance * xDistance + yDistance * yDistance;
+    }
+
+    static List<Vector2Int> astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
     {
         var result = new List<Vector2Int>();
         if (from == to)
@@ -39,8 +38,10 @@ public static class PathFinding2D
             return result;
         }
         Node finalNode;
-        List<Node> open = new List<Node>();
-        if (findDest(new Node(null, from, getDistance(from, to), 0), open, map, to, out finalNode, passableValues, getDistance, getNeighbors))
+        List<Node> openList = new List<Node>();
+
+        finalNode = null;
+        if (FindDest(new Node(null, from, GetDistance(from, to), 0), openList, map, to, out finalNode, passableValues))
         {
             while (finalNode != null)
             {
@@ -52,9 +53,8 @@ public static class PathFinding2D
         return result;
     }
 
-    static bool findDest(Node currentNode, List<Node> openList,
-                         Dictionary<Vector2Int, int> map, Vector2Int to, out Node finalNode, List<int> passableValues,
-                      Func<Vector2Int, Vector2Int, float> getDistance, Func<Vector2Int, List<Vector2Int>> getNeighbors)
+    static bool FindDest(Node currentNode, List<Node> openList,
+                         Dictionary<Vector2Int, int> map, Vector2Int to, out Node finalNode, List<int> passableValues)
     {
         if (currentNode == null) {
             finalNode = null;
@@ -65,27 +65,27 @@ public static class PathFinding2D
             finalNode = currentNode;
             return true;
         }
+
         currentNode.open = false;
         openList.Add(currentNode);
 
-        foreach (var item in getNeighbors(currentNode.pos))
+        foreach (var item in GetNeighbors(currentNode.pos))
         {
             if (map.ContainsKey(item) && passableValues.Contains(map[item]))
             {
-                findTemp(openList, currentNode, item, to, getDistance);
+                findTemp(openList, currentNode, item, to);
             }
         }
         var next = openList.FindAll(obj => obj.open).Min();
-        return findDest(next, openList, map, to, out finalNode, passableValues, getDistance, getNeighbors);
+        return FindDest(next, openList, map, to, out finalNode, passableValues);
     }
 
-    static void findTemp(List<Node> openList, Node currentNode, Vector2Int from, Vector2Int to, Func<Vector2Int, Vector2Int, float> getDistance)
+    static void findTemp(List<Node> openList, Node currentNode, Vector2Int from, Vector2Int to)
     {
-
         Node temp = openList.Find(obj => obj.pos == (from));
         if (temp == null)
         {
-            temp = new Node(currentNode, from, getDistance(from, to), currentNode.gScore + 1);
+            temp = new Node(currentNode, from, GetDistance(from, to), currentNode.gScore + 1);
             openList.Add(temp);
         }
         else if (temp.open && temp.gScore > currentNode.gScore + 1)
@@ -120,15 +120,20 @@ public static class PathFinding2D
 
             if (temp == null) return 1;
 
-            if (Mathf.Abs(this.fScore - temp.fScore) < 0.01f) {
+            if (Mathf.Abs(this.fScore - temp.fScore) > 0.01f) {
                 return this.fScore > temp.fScore ? 1 : -1;
             }
 
-            if (Mathf.Abs(this.hScore - temp.hScore) < 0.01f)
+            if (Mathf.Abs(this.hScore - temp.hScore) > 0.01f)
             {
                 return this.hScore > temp.hScore ? 1 : -1;
             }
             return 0;
+        }
+
+        public override string ToString()
+        {
+            return $"x:{pos.x},y:{pos.y}, {open}, f:{fScore}, g:{gScore}, h:{hScore}";
         }
     }
 }

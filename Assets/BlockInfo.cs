@@ -3,10 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Flags]
 public enum BlockType
 {
-    Walkable,
-    Water,
+    None
+    , Walkable  = 1 << 0
+    , Water     = 1 << 1
+    , Player    = 1 << 2
+    , Enemy     = 1 << 3
 }
 public class BlockInfo : MonoBehaviour
 {
@@ -25,6 +29,7 @@ public class BlockInfo : MonoBehaviour
         {
             return;
         }
-        GroundManager.Instance.OnTouch(transform.position);
+
+        Player.SelectPlayer.MoveTo(transform.position.ToIntVector2());
     }
 }

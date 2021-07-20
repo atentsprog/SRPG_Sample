@@ -21,10 +21,10 @@ public static class PathFinding2D
         return xDistance * xDistance + yDistance * yDistance;
     }
 
-    public static List<Vector2Int> Astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
+    public static List<Vector2Int> Astar(Vector2Int from, Vector2Int finalDest, Dictionary<Vector2Int, BlockType> map, BlockType passableValues)
     {
         var result = new List<Vector2Int>();
-        if (from == to)
+        if (from == finalDest)
         {
             result.Add(from);
             return result;
@@ -33,7 +33,7 @@ public static class PathFinding2D
         List<Node> openList = new List<Node>();
 
         finalNode = null;
-        if (FindDest(new Node(null, from, GetDistance(from, to), 0), openList, map, to, out finalNode, passableValues))
+        if (FindDest(new Node(null, from, GetDistance(from, finalDest), 0), openList, map, finalDest, out finalNode, passableValues))
         {
             while (finalNode != null)
             {
@@ -52,14 +52,14 @@ public static class PathFinding2D
     /// 1 ~ 3를 목표지점에 도착할때까지 반복한다. (노드가(갈 수 있는 지역) 없어도 반복을 중단한다)
     /// </summary>
     static bool FindDest(Node currentNode, List<Node> openList,
-                         Dictionary<Vector2Int, int> map, Vector2Int to, out Node finalNode, List<int> passableValues)
+                         Dictionary<Vector2Int, BlockType> map, Vector2Int finalDest, out Node finalNode, BlockType passableValues)
     {
         if (currentNode == null)
         {
             finalNode = null;
             return false;
         }
-        else if (currentNode.pos == to)
+        else if (currentNode.pos == finalDest)
         {
             finalNode = currentNode;
             return true;
@@ -70,13 +70,13 @@ public static class PathFinding2D
 
         foreach (var item in GetNeighbors(currentNode.pos))
         {
-            if (map.ContainsKey(item) && passableValues.Contains(map[item]))
+            if (map.ContainsKey(item) && passableValues.HasFlag(map[item]))
             {
-                findTemp(openList, currentNode, item, to);
+                findTemp(openList, currentNode, item, finalDest);
             }
         }
         var next = openList.FindAll(obj => obj.open).Min();
-        return FindDest(next, openList, map, to, out finalNode, passableValues);
+        return FindDest(next, openList, map, finalDest, out finalNode, passableValues);
     }
 
     static void findTemp(List<Node> openList, Node currentNode, Vector2Int from, Vector2Int to)

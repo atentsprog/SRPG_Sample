@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ public class BlockInfo : MonoBehaviour
 {
     public BlockType blockType;
 
-    Vector3 downMousePosition;
-    public float clickDistance = 1;
+    static Vector3 downMousePosition;
+    const float clickDistance = 1;
     void OnMouseDown()
     {
         downMousePosition = Input.mousePosition;
@@ -29,7 +30,6 @@ public class BlockInfo : MonoBehaviour
         {
             return;
         }
-
         Player.SelectPlayer.MoveTo(transform.position.ToIntVector2());
     }
 }

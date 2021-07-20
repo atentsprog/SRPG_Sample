@@ -32,16 +32,19 @@ public class Player : MonoBehaviour
             Debug.Log("길이 없다");
             return;
         }
-        
+
+        StopAllCoroutines();
         StartCoroutine(MoveToCo(path));
     }
 
     private IEnumerator MoveToCo(List<Vector2Int> path)
     {
         var startPos = path[0];
+        var destination = path[path.Count - 1];
         GroundManager.Instance.map[startPos] &= ~BlockType.Player; // Bit연산 값 빼기
         PlayAnimation("Walk");
         FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
+        SelectedTile.Instance.SetPosition(destination);
         foreach (var item in path)
         {
             Vector3 playerNewPos = new Vector3(item.x, 0, item.y);
@@ -52,8 +55,8 @@ public class Player : MonoBehaviour
         }
         PlayAnimation("Idle");
         FollowTarget.Instance.SetTarget(null);
+        SelectedTile.Instance.Hide();
 
-        var destination = path[path.Count - 1];
         GroundManager.Instance.map[destination] |= BlockType.Player;// Bit연산 값 더하기
     }
     public Ease moveEase = Ease.Linear;

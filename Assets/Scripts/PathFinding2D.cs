@@ -17,10 +17,6 @@ public static class PathFinding2D
     static float GetDistance(Vector2Int a, Vector2Int b)
     {
         return (a - b).sqrMagnitude;
-
-        //float xDistance = a.x - b.x;
-        //float yDistance = a.y - b.y;
-        //return xDistance * xDistance + yDistance * yDistance;
     }
 
     public static List<Vector2Int> Astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
@@ -32,15 +28,16 @@ public static class PathFinding2D
             return result;
         }
         List<Node> openList = new List<Node>();
-        Node finalNode = new Node(null, from, GetDistance(from, to), 0);
+        Node firstNode = new Node(null, from, GetDistance(from, to), 0);
+        openList.Add(firstNode);
 
-        if (FindDest(finalNode, openList, map, to, out finalNode, passableValues))
+        if (FindDest(firstNode, openList, map, to, out Node finalNode, passableValues))
         {
             while (finalNode != null)
             {
                 result.Add(finalNode.pos);
                 finalNode = finalNode.preNode;
-            } 
+            }
         }
         result.Reverse();
         return result;
@@ -60,20 +57,19 @@ public static class PathFinding2D
         }
 
         currentNode.open = false;
-        openList.Add(currentNode);
 
         foreach (var item in GetNeighbors(currentNode.pos))
         {
             if (map.ContainsKey(item) && passableValues.Contains(map[item]))
             {
-                findTemp(openList, currentNode, item, to);
+                FindTemp(openList, currentNode, item, to);
             }
         }
         var next = openList.FindAll(obj => obj.open).Min();
         return FindDest(next, openList, map, to, out finalNode, passableValues);
     }
 
-    static void findTemp(List<Node> openList, Node currentNode, Vector2Int from, Vector2Int to)
+    static void FindTemp(List<Node> openList, Node currentNode, Vector2Int from, Vector2Int to)
     {
         Node temp = openList.Find(obj => obj.pos == (from));
         if (temp == null)
@@ -93,12 +89,12 @@ public static class PathFinding2D
     {
         public Node preNode;
         public Vector2Int pos;
-        public float fScore;
-        public float hScore;
-        public float gScore;
-        public bool open = true;
+        public float fScore;    //  h + g
+        public float hScore;    // 목표지점에서의 길이
+        public int gScore;      // 계산된 스텝 (첫번째 계산은 0, 진행될 수록 1씩 증가)
+        public bool open = true; // true면 찾아봐야할 길, false는 이미 찾아본길
 
-        public Node(Node prePos, Vector2Int pos, float hScore, float gScore)
+        public Node(Node prePos, Vector2Int pos, float hScore, int gScore)
         {
             this.preNode = prePos;
             this.pos = pos;
@@ -109,9 +105,7 @@ public static class PathFinding2D
 
         public int CompareTo(object obj)
         {
-            Node temp = obj as Node;
-
-            if (temp == null) return 1;
+            if (!(obj is Node temp)) return 1;
 
             if (Mathf.Abs(this.fScore - temp.fScore) > 0.01f) {
                 return this.fScore > temp.fScore ? 1 : -1;

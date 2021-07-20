@@ -7,6 +7,6 @@ public class Monster : MonoBehaviour
     Animator animator;
     void Start()
     {
-        //animator  get
+        GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster);
     }
 }

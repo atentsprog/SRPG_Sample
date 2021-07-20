@@ -120,11 +120,11 @@ public static class PathFinding2D
 
             if (temp == null) return 1;
 
-            if (Mathf.Abs(this.fScore - temp.fScore) < 0.01f) {
+            if (Mathf.Abs(this.fScore - temp.fScore) > 0.01f) {
                 return this.fScore > temp.fScore ? 1 : -1;
             }
 
-            if (Mathf.Abs(this.hScore - temp.hScore) < 0.01f)
+            if (Mathf.Abs(this.hScore - temp.hScore) > 0.01f)
             {
                 return this.hScore > temp.hScore ? 1 : -1;
             }

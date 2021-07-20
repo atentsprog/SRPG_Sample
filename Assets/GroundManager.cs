@@ -10,6 +10,11 @@ static public class GroundManagerExtension
     {
         return new Vector2Int(Mathf.RoundToInt(vector3.x), Mathf.RoundToInt(vector3.z));
     }
+
+    static public Vector3 TotVector3(this Vector2Int vector2Int)
+    {
+        return new Vector3(vector2Int.x, 0, vector2Int.y);
+    }
 }
 
 public class GroundManager : SingletonMonoBehavior<GroundManager>

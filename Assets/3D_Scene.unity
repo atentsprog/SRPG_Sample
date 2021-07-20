@@ -6991,6 +6991,9 @@ MonoBehaviour:
   passableValues: 7
   moveEase: 1
   moveTimePerUnit: 0.3
+  moveableAreaEffects: []
+  moveableAreaEffect: {fileID: 70824721132438655, guid: 2841f3d7aa7d02148834b38809652adb, type: 3}
+  moveableDistance: 5
 --- !u!114 &662812935
 MonoBehaviour:
   m_ObjectHideFlags: 0

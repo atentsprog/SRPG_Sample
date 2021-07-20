@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class GroundManager : SingletonMonoBehavior<GroundManager>
@@ -13,33 +14,10 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
 
     public bool useDebugMode = true;
     public GameObject debugTextPrefab;
-    new private void Awake()
-    {
-        base.Awake();
-        //passableValues = new List<int>();
-        //passableValues.Add((int)BlockType.Walkable);
-
-        // 자식의 모든 BlockInfo 찾자.
-        var blockInfos = GetComponentsInChildren<BlockInfo>();
-
-        // 맵을 채워 넣자.
-        foreach (var item in blockInfos)
-        {
-            var pos = item.transform.position;
-            Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z);
-            map[intPos] = item.blockType;
-
-            if (useDebugMode)
-            {
-                string posString = $"{intPos.x}:{intPos.y}";
-                item.name = $"{item.name}:: {posString}";
-                GameObject textMeshGo = Instantiate(debugTextPrefab, item.transform);
-                textMeshGo.transform.localPosition = Vector3.zero;
-                TextMesh textMesh = textMeshGo.GetComponent<TextMesh>();
-                textMesh.text = posString;
-            }
-        }
-    }
+    //new private void Awake()
+    //{
+    //    base.Awake();
+    //}
     internal void OnTouch(Vector3 position)
     {
         //Vector2Int findPos = new Vector2Int((int)position.x, (int)position.z);
@@ -52,8 +30,39 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         StopAllCoroutines();
         StartCoroutine(FindPathCo(goalPos));
     }
+
+    public List<GameObject> debugTextGos = new List<GameObject>();
     IEnumerator FindPathCo(Vector2Int goalPos)
     {
+        // 자식의 모든 BlockInfo 찾자.
+        var blockInfos = GetComponentsInChildren<BlockInfo>();
+        // 맵을 채워 넣자.
+
+        debugTextGos.ForEach(x => Destroy(x));  // 블럭에 기존에 있던 디버그용 텍스트 삭제
+        debugTextGos.Clear();
+        foreach (var item in blockInfos)
+        {
+            var pos = item.transform.position;
+            Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z);
+            map[intPos] = item.blockType;
+
+            if (useDebugMode)
+            {
+                StringBuilder debugText = new StringBuilder();// $"{item.blockType}:{intPos.y}";
+                //ContaingText(debugText, item, BlockType.Walkable);
+                ContaingText(debugText, item, BlockType.Water   );
+                ContaingText(debugText, item, BlockType.Player  );
+                ContaingText(debugText, item, BlockType.Monster);
+
+                //item.name = $"{item.name}:: {posString}";
+                GameObject textMeshGo = Instantiate(debugTextPrefab, item.transform);
+                debugTextGos.Add(textMeshGo);
+                textMeshGo.transform.localPosition = Vector3.zero;
+                TextMesh textMesh = textMeshGo.GetComponentInChildren<TextMesh>();
+                textMesh.text = debugText.ToString();
+            }
+        }
+
         //playerPos.x = (int)player.position.x;
         //playerPos.y =(int)player.position.z;
         playerPos.x = Mathf.RoundToInt(player.position.x);
@@ -78,6 +87,15 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
             FollowTarget.Instance.SetTarget(null);
         }
     }
+
+    private void ContaingText(StringBuilder sb, BlockInfo item, BlockType walkable)
+    {
+        if (item.blockType.HasFlag(walkable))
+        {
+            sb.AppendLine(walkable.ToString());
+        }
+    }
+
     public Ease moveEase = Ease.InBounce;
     public float moveTimePerUnit = 0.3f;
 }

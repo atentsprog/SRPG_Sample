@@ -56,7 +56,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         playerPos.x = Mathf.RoundToInt(player.position.x);
         playerPos.y = Mathf.RoundToInt(player.position.z);
 
-        List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
+        List<Vector2Int> path = PathFinding2D.Astar(playerPos, goalPos, map, passableValues);
         if (path.Count == 0)
             Debug.Log("길이 없다");
         else

@@ -5,14 +5,6 @@ using System.Linq;
 
 public static class PathFinding2D
 {
-    /**
-     * find a path in grid tilemaps
-     */
-    public static List<Vector2Int> find4(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
-    {
-        return astar(from, to, map, passableValues);
-    }
-
     static List<Vector2Int> GetNeighbors(Vector2Int pos)
     {
         var neighbors = new List<Vector2Int>();
@@ -24,12 +16,14 @@ public static class PathFinding2D
     }
     static float GetDistance(Vector2Int a, Vector2Int b)
     {
-        float xDistance = a.x - b.x;
-        float yDistance = a.y - b.y;
-        return xDistance * xDistance + yDistance * yDistance;
+        return (a - b).sqrMagnitude;
+
+        //float xDistance = a.x - b.x;
+        //float yDistance = a.y - b.y;
+        //return xDistance * xDistance + yDistance * yDistance;
     }
 
-    static List<Vector2Int> astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
+    public static List<Vector2Int> Astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
     {
         var result = new List<Vector2Int>();
         if (from == to)
@@ -37,11 +31,10 @@ public static class PathFinding2D
             result.Add(from);
             return result;
         }
-        Node finalNode;
         List<Node> openList = new List<Node>();
+        Node finalNode = new Node(null, from, GetDistance(from, to), 0);
 
-        finalNode = null;
-        if (FindDest(new Node(null, from, GetDistance(from, to), 0), openList, map, to, out finalNode, passableValues))
+        if (FindDest(finalNode, openList, map, to, out finalNode, passableValues))
         {
             while (finalNode != null)
             {

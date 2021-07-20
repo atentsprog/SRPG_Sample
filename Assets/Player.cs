@@ -24,7 +24,6 @@ public class Player : MonoBehaviour
         Vector2Int findPos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         FindPath(findPos);
     }
-
     void FindPath(Vector2Int goalPos)
     {
         StopAllCoroutines();

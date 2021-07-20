@@ -30,7 +30,7 @@ public class BlockInfo : MonoBehaviour
         {
             return;
         }
-        GroundManager.Instance.OnTouch(transform.position);
+        Player.SelectPlayer.OnTouch(transform.position);
     }
 
     string debugTextPrefab = "DebugTextPrefab";

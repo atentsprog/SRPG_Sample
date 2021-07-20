@@ -38,57 +38,12 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
             blockInfoMap[intPos] = item;
         }
     }
-    internal void OnTouch(Vector3 position)
-    {
-        //Vector2Int findPos = new Vector2Int((int)position.x, (int)position.z);
-        Vector2Int findPos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-        FindPath(findPos);
-    }
-
-    void FindPath(Vector2Int goalPos)
-    {
-        StopAllCoroutines();
-        StartCoroutine(FindPathCo(goalPos));
-    }
 
     public List<GameObject> debugTextGos = new List<GameObject>();
-    IEnumerator FindPathCo(Vector2Int goalPos)
-    {
-
-        //playerPos.x = (int)player.position.x;
-        //playerPos.y =(int)player.position.z;
-        playerPos.x = Mathf.RoundToInt(player.position.x);
-        playerPos.y = Mathf.RoundToInt(player.position.z);
-
-        List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
-        if (path.Count == 0)
-            Debug.Log("길이 없다");
-        else
-        {
-            // 월래 위치에선 플레이어 정보 삭제
-            RemoveBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
-            Player.SelectPlayer.PlayAnimation("Walk");
-            FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
-            foreach (var item in path)
-            {
-                Vector3 playerNewPos = new Vector3(item.x, 0, item.y);
-                player.LookAt(playerNewPos);
-                //player.position = playerNewPos;
-                player.DOMove(playerNewPos, moveTimePerUnit).SetEase(moveEase);
-                yield return new WaitForSeconds(moveTimePerUnit);
-            }
-            Player.SelectPlayer.PlayAnimation("Idle");
-            FollowTarget.Instance.SetTarget(null);
-            // 이동한 위치에는 플레이어 정보 추가
-            AddBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
-        }
-    }
-
-    public Ease moveEase = Ease.InBounce;
-    public float moveTimePerUnit = 0.3f;
 
 
-    internal void AddBlockInfo(Vector3 position, BlockType addBlockType)
+
+    public void AddBlockInfo(Vector3 position, BlockType addBlockType)
     {
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         if (map.ContainsKey(pos) == false)
@@ -102,7 +57,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         if (useDebugMode)
             blockInfoMap[pos].UpdateDebugInfo();
     }
-    private void RemoveBlockInfo(Vector3 position, BlockType removeBlockType)
+    public void RemoveBlockInfo(Vector3 position, BlockType removeBlockType)
     {
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         if (map.ContainsKey(pos) == false)

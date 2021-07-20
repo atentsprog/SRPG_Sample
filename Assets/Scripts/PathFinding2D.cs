@@ -14,10 +14,10 @@ public static class PathFinding2D
         neighbors.Add(new Vector2Int(pos.x - 1, pos.y));
         return neighbors;
     }
-    static float GetDistance(Vector2Int a, Vector2Int b)
-    {
-        return (a - b).sqrMagnitude;
-    }
+    //static float GetDistance(Vector2Int a, Vector2Int b)
+    //{
+    //    return (a - b).sqrMagnitude;
+    //}
 
     public static List<Vector2Int> Astar(Vector2Int from, Vector2Int to, Dictionary<Vector2Int, int> map, List<int> passableValues)
     {
@@ -28,7 +28,7 @@ public static class PathFinding2D
             return result;
         }
         List<Node> openList = new List<Node>();
-        Node firstNode = new Node(null, from, GetDistance(from, to), 0);
+        Node firstNode = new Node(null, from, 0);
         openList.Add(firstNode);
 
         if (FindDest(firstNode, openList, map, to, out Node finalNode, passableValues))
@@ -74,13 +74,12 @@ public static class PathFinding2D
         Node temp = openList.Find(obj => obj.pos == (from));
         if (temp == null)
         {
-            temp = new Node(currentNode, from, GetDistance(from, to), currentNode.gScore + 1);
+            temp = new Node(currentNode, from, currentNode.gScore + 1);
             openList.Add(temp);
         }
         else if (temp.open && temp.gScore > currentNode.gScore + 1)
         {
             temp.gScore = currentNode.gScore + 1;
-            temp.fScore = temp.hScore + temp.gScore;
             temp.preNode = currentNode;
         }
     }
@@ -89,38 +88,38 @@ public static class PathFinding2D
     {
         public Node preNode;
         public Vector2Int pos;
-        public float fScore;    //  h + g
-        public float hScore;    // 목표지점에서의 길이
+        //public float fScore;    //  h + g -> hScore를 사용하지 않으므로 불필요하다
+        //public float hScore;    // 이전 노드에서 현재 노드의 길이 -> 사각형 블록은 항상 길이가 같으므로 불필요하다
         public int gScore;      // 계산된 스텝 (첫번째 계산은 0, 진행될 수록 1씩 증가)
         public bool open = true; // true면 찾아봐야할 길, false는 이미 찾아본길
 
-        public Node(Node prePos, Vector2Int pos, float hScore, int gScore)
+        public Node(Node prePos, Vector2Int pos, int gScore)
         {
             this.preNode = prePos;
             this.pos = pos;
-            this.hScore = hScore;
+            //this.hScore = hScore;
             this.gScore = gScore;
-            this.fScore = hScore + gScore;
+            //this.fScore = hScore + gScore;
         }
 
         public int CompareTo(object obj)
         {
-            if (!(obj is Node temp)) return 1;
+            if (!(obj is Node other)) return 1;
 
-            if (Mathf.Abs(this.fScore - temp.fScore) > 0.01f) {
-                return this.fScore > temp.fScore ? 1 : -1;
-            }
+            //if (Mathf.Abs(this.fScore - temp.fScore) > 0.01f) {
+            //    return this.fScore > temp.fScore ? 1 : -1;
+            //}
 
-            if (Mathf.Abs(this.hScore - temp.hScore) > 0.01f)
-            {
-                return this.hScore > temp.hScore ? 1 : -1;
-            }
-            return 0;
+            //if (Mathf.Abs(this.hScore - temp.hScore) > 0.01f)
+            //{
+            //    return this.hScore > temp.hScore ? 1 : -1;
+            //}
+            return gScore.CompareTo(other.gScore);
         }
 
         public override string ToString()
         {
-            return $"x:{pos.x},y:{pos.y}, {open}, f:{fScore}, g:{gScore}, h:{hScore}";
+            return $"x:{pos.x},y:{pos.y}, {open},  g:{gScore}";
         }
     }
 }

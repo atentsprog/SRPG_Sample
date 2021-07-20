@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    private void Awake()
+    {
+        
+    }
     Animator animator;
     void Start()
     {

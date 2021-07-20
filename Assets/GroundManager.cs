@@ -36,19 +36,6 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
                 item.UpdateDebugInfo();
             }
             blockInfoMap[intPos] = item;
-            //    StringBuilder debugText = new StringBuilder();// $"{item.blockType}:{intPos.y}";
-            //    //ContaingText(debugText, item, BlockType.Walkable);
-            //    ContaingText(debugText, item, BlockType.Water);
-            //    ContaingText(debugText, item, BlockType.Player);
-            //    ContaingText(debugText, item, BlockType.Monster);
-
-            //    //item.name = $"{item.name}:: {posString}";
-            //    GameObject textMeshGo = Instantiate(debugTextPrefab, item.transform);
-            //    debugTextGos.Add(textMeshGo);
-            //    textMeshGo.transform.localPosition = Vector3.zero;
-            //    TextMesh textMesh = textMeshGo.GetComponentInChildren<TextMesh>();
-            //    textMesh.text = debugText.ToString();
-            //}
         }
     }
     internal void OnTouch(Vector3 position)
@@ -78,6 +65,8 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
             Debug.Log("길이 없다");
         else
         {
+            // 월래 위치에선 플레이어 정보 삭제
+            RemoveBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
             Player.SelectPlayer.PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
             foreach (var item in path)
@@ -90,16 +79,10 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
             }
             Player.SelectPlayer.PlayAnimation("Idle");
             FollowTarget.Instance.SetTarget(null);
+            // 이동한 위치에는 플레이어 정보 추가
+            AddBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
         }
     }
-
-    //private void ContaingText(StringBuilder sb, BlockInfo item, BlockType walkable)
-    //{
-    //    if (item.blockType.HasFlag(walkable))
-    //    {
-    //        sb.AppendLine(walkable.ToString());
-    //    }
-    //}
 
     public Ease moveEase = Ease.InBounce;
     public float moveTimePerUnit = 0.3f;
@@ -116,6 +99,19 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         //map[pos] = map[pos] | addBlockType;   // 기존 값에 추가하겠다.
         map[pos] |= addBlockType;               // 기존 값에 추가하겠다.
         blockInfoMap[pos].blockType |= addBlockType;
+        if (useDebugMode)
+            blockInfoMap[pos].UpdateDebugInfo();
+    }
+    private void RemoveBlockInfo(Vector3 position, BlockType removeBlockType)
+    {
+        Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
+        if (map.ContainsKey(pos) == false)
+        {
+            Debug.LogError($"{pos} 위치에 맵이 없다");
+        }
+
+        map[pos] &= ~removeBlockType;               // 기존 값에서 삭제하겠다.
+        blockInfoMap[pos].blockType &= ~removeBlockType;
         if (useDebugMode)
             blockInfoMap[pos].UpdateDebugInfo();
     }

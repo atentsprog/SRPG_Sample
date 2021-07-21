@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Actor
 {
     static public Player SelectPlayer;
     Animator animator;
@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     {
         SelectPlayer = this;
         animator = GetComponentInChildren<Animator>();
-        GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player);
+        GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
     }
 
     public void PlayAnimation(string nodeName)
@@ -58,7 +58,7 @@ public class Player : MonoBehaviour
             Player.SelectPlayer.PlayAnimation("Idle");
             FollowTarget.Instance.SetTarget(null);
             // 이동한 위치에는 플레이어 정보 추가
-            GroundManager.Instance.AddBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
+            GroundManager.Instance.AddBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player, this);
         }
     }
 

@@ -43,7 +43,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
 
 
 
-    public void AddBlockInfo(Vector3 position, BlockType addBlockType)
+    public void AddBlockInfo(Vector3 position, BlockType addBlockType, Actor actor)
     {
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         if (map.ContainsKey(pos) == false)
@@ -54,6 +54,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         //map[pos] = map[pos] | addBlockType;   // 기존 값에 추가하겠다.
         map[pos] |= addBlockType;               // 기존 값에 추가하겠다.
         blockInfoMap[pos].blockType |= addBlockType;
+        blockInfoMap[pos].actor = actor;
         if (useDebugMode)
             blockInfoMap[pos].UpdateDebugInfo();
     }

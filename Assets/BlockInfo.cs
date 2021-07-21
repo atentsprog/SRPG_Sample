@@ -35,6 +35,8 @@ public class BlockInfo : MonoBehaviour
 
     string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;
+    internal Actor actor;
+
     internal void UpdateDebugInfo()
     {
         if (debugTextGos == null)

@@ -2,7 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster : MonoBehaviour
+public enum StatusType
+{
+    Normal,
+    Sleep,
+    Die,
+}
+
+public class Actor : MonoBehaviour
+{
+    public string nickname;
+    public float hp;
+    public float mp;
+    public StatusType status;
+}
+public class Monster : Actor
 {
     private void Awake()
     {
@@ -11,6 +25,6 @@ public class Monster : MonoBehaviour
     Animator animator;
     void Start()
     {
-        GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster);
+        GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster, this);
     }
 }

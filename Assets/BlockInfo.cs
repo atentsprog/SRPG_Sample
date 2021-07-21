@@ -61,4 +61,32 @@ public class BlockInfo : MonoBehaviour
             sb.AppendLine(walkable.ToString());
         }
     }
+    Renderer m_Renderer;
+    private Color m_MouseOverColor = Color.red;
+    private Color m_OriginalColor;
+    private void Awake()
+    {
+        m_Renderer = GetComponentInChildren<Renderer>();
+        m_OriginalColor = m_Renderer.material.color;
+    }
+    void OnMouseOver()
+    {
+        // Change the color of the GameObject to red when the mouse is over GameObject
+        m_Renderer.material.color = m_MouseOverColor;
+        if(actor)
+        {
+            ActorStatusUI.Instance.Show(actor);
+        }
+    }
+
+    void OnMouseExit()
+    {
+        // Reset the color of the GameObject back to normal
+        m_Renderer.material.color = m_OriginalColor;
+
+        if (actor)
+        {
+            ActorStatusUI.Instance.Close();
+        }
+    }
 }

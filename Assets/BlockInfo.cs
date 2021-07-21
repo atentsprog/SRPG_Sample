@@ -30,7 +30,28 @@ public class BlockInfo : MonoBehaviour
         {
             return;
         }
-        Player.SelectPlayer.OnTouch(transform.position);
+        if( actor && actor == Player.SelectPlayer)
+        {
+            // 영역 표시.
+            //actor.moveDistance
+            // 첫번째 이동으로 갈수 있는것을 첫번째 라인에 추가.
+            ShowMoveDistance(actor.moveDistance);
+        }
+        else
+            Player.SelectPlayer.OnTouch(transform.position);
+    }
+
+    
+    private void ShowMoveDistance(int moveDistance)
+    {
+        Quaternion rotate = Quaternion.Euler(0, 45, 0);
+        var blocks = Physics.OverlapBox(transform.position, Vector3.one * ((float)moveDistance / 2), rotate);
+
+        foreach (var item in blocks)
+        {
+            if (Player.SelectPlayer.OnMoveable(item.transform.position))
+                item.GetComponent<BlockInfo>()?.ToChangeRedColor();
+        }
     }
 
     string debugTextPrefab = "DebugTextPrefab";
@@ -72,11 +93,16 @@ public class BlockInfo : MonoBehaviour
     void OnMouseOver()
     {
         // Change the color of the GameObject to red when the mouse is over GameObject
-        m_Renderer.material.color = m_MouseOverColor;
-        if(actor)
+        ToChangeRedColor();
+        if (actor)
         {
             ActorStatusUI.Instance.Show(actor);
         }
+    }
+
+    public void ToChangeRedColor()
+    {
+        m_Renderer.material.color = m_MouseOverColor;
     }
 
     void OnMouseExit()

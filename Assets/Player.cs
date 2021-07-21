@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,6 +48,7 @@ public class Player : Actor
             GroundManager.Instance.RemoveBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
             Player.SelectPlayer.PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
+            path.RemoveAt(0);
             foreach (var item in path)
             {
                 Vector3 playerNewPos = new Vector3(item.x, 0, item.y);
@@ -60,6 +62,22 @@ public class Player : Actor
             // 이동한 위치에는 플레이어 정보 추가
             GroundManager.Instance.AddBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player, this);
         }
+    }
+
+    internal bool OnMoveable(Vector3 position)
+    {
+        Vector2Int goalPos = position.ToVector2Int();
+        Vector2Int playerPos = transform.position.ToVector2Int();
+        var map = GroundManager.Instance.map;
+        var path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
+        if (path.Count == 0)
+            Debug.Log("길 업따 !");
+        else if (path.Count > 5)
+            Debug.Log("이동모태 !");
+        else
+            return true;
+
+        return false;
     }
 
     public Ease moveEase = Ease.InBounce;

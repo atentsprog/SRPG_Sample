@@ -5,6 +5,19 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+static public class GroundExtention
+{
+    static public Vector2Int ToVector2Int(this Vector3 v3)
+    {
+        return new Vector2Int( Mathf.RoundToInt(v3.x)
+            , Mathf.RoundToInt(v3.x));
+    }
+    static public Vector3 ToVector2Int(this Vector2Int v2Int, int y)
+    {
+        return new Vector3(v2Int.x, y, v2Int.y);
+    }
+}
+
 public class GroundManager : SingletonMonoBehavior<GroundManager>
 {
     public Vector2Int playerPos; // 여기서 부터 시작
@@ -68,6 +81,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
 
         map[pos] &= ~removeBlockType;               // 기존 값에서 삭제하겠다.
         blockInfoMap[pos].blockType &= ~removeBlockType;
+        blockInfoMap[pos].actor = null;
         if (useDebugMode)
             blockInfoMap[pos].UpdateDebugInfo();
     }

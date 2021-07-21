@@ -54,7 +54,7 @@ public class BlockInfo : MonoBehaviour
     private void ShowMoveDistance(int moveDistance)
     {
         Quaternion rotate = Quaternion.Euler(0, 45, 0);
-        var blocks = Physics.OverlapSphere(transform.position, moveDistance);
+        var blocks = Physics.OverlapBox(transform.position, Vector3.one * (moveDistance - 0.9f), rotate);
 
         foreach (var item in blocks)
         {

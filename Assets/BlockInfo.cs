@@ -21,8 +21,16 @@ public class BlockInfo : MonoBehaviour
     public float clickDistance = 1;
     void OnMouseDown()
     {
+        ClearMoveableArea();
         downMousePosition = Input.mousePosition;
     }
+
+    private void ClearMoveableArea()
+    {
+        highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
+        highLightedMoveableArea.Clear();
+    }
+
     void OnMouseUp()
     {
         var upMousePosition = Input.mousePosition;
@@ -30,6 +38,7 @@ public class BlockInfo : MonoBehaviour
         {
             return;
         }
+
         if( actor && actor == Player.SelectPlayer)
         {
             // 영역 표시.
@@ -50,9 +59,17 @@ public class BlockInfo : MonoBehaviour
         foreach (var item in blocks)
         {
             if (Player.SelectPlayer.OnMoveable(item.transform.position))
-                item.GetComponent<BlockInfo>()?.ToChangeRedColor();
+            {
+                var block = item.GetComponent<BlockInfo>();
+                if (block)
+                {
+                    block.ToChangeRedColor();
+                    highLightedMoveableArea.Add(block);
+                }
+            }
         }
     }
+    static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
 
     string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;
@@ -93,8 +110,6 @@ public class BlockInfo : MonoBehaviour
     }
     void OnMouseOver()
     {
-        // Change the color of the GameObject to red when the mouse is over GameObject
-        ToChangeRedColor();
         if (actor)
         {
             ActorStatusUI.Instance.Show(actor);
@@ -105,12 +120,13 @@ public class BlockInfo : MonoBehaviour
     {
         m_Renderer.material.color = m_MouseOverColor;
     }
+    public void ToChangeOriginalColor()
+    {
+        m_Renderer.material.color = m_OriginalColor;
+    }
 
     void OnMouseExit()
     {
-        // Reset the color of the GameObject back to normal
-        m_Renderer.material.color = m_OriginalColor;
-
         if (actor)
         {
             ActorStatusUI.Instance.Close();

@@ -41,7 +41,8 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         foreach (var item in blockInfos)
         {
             var pos = item.transform.position;
-            Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z);
+            //Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z); <-- 에러 코드
+            Vector2Int intPos = pos.ToVector2Int();
             map[intPos] = item.blockType;
 
             if (useDebugMode)

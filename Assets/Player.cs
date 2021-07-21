@@ -13,6 +13,7 @@ public class Player : Actor
         SelectPlayer = this;
         animator = GetComponentInChildren<Animator>();
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
+        FollowTarget.Instance.SetTarget(transform);
     }
 
     public void PlayAnimation(string nodeName)

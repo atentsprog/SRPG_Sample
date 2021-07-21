@@ -66,7 +66,8 @@ public class BlockInfo : MonoBehaviour
             debugTextGos = textMeshGo;
             textMeshGo.transform.localPosition = Vector3.zero;
         }
-
+        var intPos = transform.position.ToVector2Int();
+        name = $"{intPos.x}:{intPos.y}";
         StringBuilder debugText = new StringBuilder();// $"{item.blockType}:{intPos.y}";
                                                       //ContaingText(debugText, item, BlockType.Walkable);
         ContaingText(debugText, BlockType.Water);

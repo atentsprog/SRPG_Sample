@@ -27,8 +27,8 @@ public class BlockInfo : MonoBehaviour
 
     private void ClearMoveableArea()
     {
-        highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
-        highLightedMoveableArea.Clear();
+        HighLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
+        HighLightedMoveableArea.Clear();
     }
 
     void OnMouseUp()
@@ -41,15 +41,24 @@ public class BlockInfo : MonoBehaviour
 
         if( actor && actor == Player.SelectPlayer)
         {
-            // 영역 표시.
-            //actor.moveDistance
-            // 첫번째 이동으로 갈수 있는것을 첫번째 라인에 추가.
-            ShowMoveDistance(actor.moveDistance);
+            if(HighLightedBlock)
+            {
+                ClearMoveableArea();
+                HighLightedBlock = null;
+            }
+            else
+            {
+                HighLightedBlock = this;
+                // 영역 표시.
+                //actor.moveDistance
+                // 첫번째 이동으로 갈수 있는것을 첫번째 라인에 추가.
+                ShowMoveDistance(actor.moveDistance);
+            }
         }
         else
             Player.SelectPlayer.OnTouch(transform.position);
     }
-
+    
     
     private void ShowMoveDistance(int moveDistance)
     {
@@ -64,12 +73,13 @@ public class BlockInfo : MonoBehaviour
                 if (block)
                 {
                     block.ToChangeRedColor();
-                    highLightedMoveableArea.Add(block);
+                    HighLightedMoveableArea.Add(block);
                 }
             }
         }
     }
-    static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
+    static BlockInfo HighLightedBlock;
+    static List<BlockInfo> HighLightedMoveableArea = new List<BlockInfo>();
 
     string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;

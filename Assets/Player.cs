@@ -71,14 +71,17 @@ public class Player : Actor
         Vector2Int playerPos = transform.position.ToVector2Int();
         var map = GroundManager.Instance.map;
         var path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
-        if (path.Count == 0)
-            Debug.Log("길 업따 !");
-        else if (path.Count > 5)
-            Debug.Log("이동모태 !");
-        else
-            return true;
 
-        return false;
+        return path.Count > 0 && path.Count <= 5;
+
+        //if (path.Count == 0)
+        //    Debug.Log("길 업따 !");
+        //else if (path.Count > 5)
+        //    Debug.Log("이동모태 !");
+        //else
+        //    return true;
+
+        //return false;
     }
 
     public Ease moveEase = Ease.InBounce;

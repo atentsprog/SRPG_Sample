@@ -202,6 +202,8 @@ public class PanAndZoom : MonoBehaviour {
             cam.transform.position -= (cam.ScreenToWorldPoint(deltaPosition) - cam.ScreenToWorldPoint(Vector2.zero));
         }
     }
+    public float minOrthographicSize = 3;
+    public float maxOrthographicSize = 15;
     void OnPinch(Vector2 center, float oldDistance, float newDistance, Vector2 touchDelta) {
         if (onPinch != null) {
             onPinch(oldDistance, newDistance);
@@ -214,6 +216,8 @@ public class PanAndZoom : MonoBehaviour {
                 var currentPinchPosition = cam.ScreenToWorldPoint(center);
 
                 cam.orthographicSize = Mathf.Max(0.1f, cam.orthographicSize * oldDistance / newDistance);
+                cam.orthographicSize = Mathf.Max(minOrthographicSize, cam.orthographicSize);
+                cam.orthographicSize = Mathf.Min(maxOrthographicSize, cam.orthographicSize);
 
                 var newPinchPosition = cam.ScreenToWorldPoint(center);
 

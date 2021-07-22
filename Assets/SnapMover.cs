@@ -6,7 +6,8 @@ public class SnapMover : MonoBehaviour
 {
     private void Awake()
     {
-        Destroy(gameObject);
+        if(Application.isPlaying)
+            Destroy(this);
     }
     void Update()
     {

@@ -1,4 +1,4 @@
-using DG.Tweening;
+ï»¿using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,10 +43,10 @@ public class Player : Actor
         var map = GroundManager.Instance.blockInfoMap;
         List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
         if (path.Count == 0)
-            Debug.Log("±æÀÌ ¾ø´Ù");
+            Debug.Log("ê¸¸ì´ ì—†ë‹¤");
         else
         {
-            // ¿ù·¡ À§Ä¡¿¡¼± ÇÃ·¹ÀÌ¾î Á¤º¸ »èÁ¦
+            // ì›”ë˜ ìœ„ì¹˜ì—ì„  í”Œë ˆì´ì–´ ì •ë³´ ì‚­ì œ
             GroundManager.Instance.RemoveBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player);
             Player.SelectedPlayer.PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(Player.SelectedPlayer.transform);
@@ -61,7 +61,7 @@ public class Player : Actor
             }
             Player.SelectedPlayer.PlayAnimation("Idle");
             FollowTarget.Instance.SetTarget(null);
-            // ÀÌµ¿ÇÑ À§Ä¡¿¡´Â ÇÃ·¹ÀÌ¾î Á¤º¸ Ãß°¡
+            // ì´ë™í•œ ìœ„ì¹˜ì—ëŠ” í”Œë ˆì´ì–´ ì •ë³´ ì¶”ê°€
             GroundManager.Instance.AddBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player, this);
         }
     }
@@ -73,9 +73,9 @@ public class Player : Actor
         var map = GroundManager.Instance.blockInfoMap;
         var path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
         if (path.Count == 0)
-            Debug.Log("±æ ¾÷µû !");
+            Debug.Log("ê¸¸ ì—…ë”° !");
         else if (path.Count > maxDistance + 1)
-            Debug.Log("ÀÌµ¿¸ğÅÂ !");
+            Debug.Log("ì´ë™ëª¨íƒœ !");
         else
             return true;
 
@@ -84,7 +84,36 @@ public class Player : Actor
 
     internal void ShowAttackableArea()
     {
-        throw new NotImplementedException();
+        //í˜„ì¬ ìœ„ì¹˜ì—ì„œ ê³µê²© ê°€ëŠ¥í•œ ì§€ì—­ì„ ì²´í¬í•˜ì.
+        Vector2Int currentPos = transform.position.ToVector2Int();
+        var map = GroundManager.Instance.blockInfoMap;
+
+        //ê³µê²©ê°€ëŠ¥í•œ ì§€ì—­ì— ì ì´ ìˆëŠ”ì§€ í™•ì¸í•˜ì.
+        foreach (var item in attackablePoints)
+        {
+            Vector2Int pos = item + currentPos; //itemì˜ ì›”ë“œ ì§€ì—­ ìœ„ì¹˜;
+
+            if (map.ContainsKey(pos))
+            {
+                if (IsEnemyExist(map[pos])) //map[pos]ì— ì ì´ ìˆëŠ”ê°€? -> ì ì¸ì§€ íŒë‹¨ì€ actorTypeìœ¼ë¡œ í•˜ì.
+                {
+                    map[pos].ToChangeColor(Color.red);
+                }
+            }
+        }
+    }
+
+    private bool IsEnemyExist(BlockInfo blockInfo)
+    {
+        //if (blockInfo.actor == null)
+        //    return false;
+
+        if (blockInfo.blockType.HasFlag(BlockType.Monster) == false)
+            return false;
+
+        Debug.Assert(blockInfo.actor != null, "ì•¡í„°ëŠ” ê¼­ ìˆì–´ì•¼ í•´!");
+
+        return true;
     }
 
     public Ease moveEase = Ease.InBounce;

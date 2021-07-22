@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -57,22 +57,22 @@ public class BlockInfo : MonoBehaviour
             case GameStateType.NotInit:
             case GameStateType.IngPlayerMove:
             case GameStateType.MonsterTurn:
-                Debug.Log($"ºí·°À» Å¬¸¯ÇÒ ¼ö ¾ø´Â »óÅÂ ÀÔ´Ï´Ù:" +
+                Debug.Log($"ë¸”ëŸ­ì„ í´ë¦­í•  ìˆ˜ ì—†ëŠ” ìƒíƒœ ì…ë‹ˆë‹¤:" +
                     $"{StageManager.GameState}");
                 break;
         }
 
-        //// ÀÌ¹Ì »¡°£ ºí·° »óÅÂÀÏ¶§ ´Ù½Ã ¼±ÅÃÇÏ¸é »¡°£ ºí·°À» ¿ø»ó º¹±Í ½ÃÄÑ¶ó.
+        //// ì´ë¯¸ ë¹¨ê°„ ë¸”ëŸ­ ìƒíƒœì¼ë•Œ ë‹¤ì‹œ ì„ íƒí•˜ë©´ ë¹¨ê°„ ë¸”ëŸ­ì„ ì›ìƒ ë³µê·€ ì‹œì¼œë¼.
 
 
-        //// Áö±İ ºí·°¿¡ ¸ó½ºÅÍ ÀÖÀ¸¸é ¶§¸®ÀÚ.
+        //// ì§€ê¸ˆ ë¸”ëŸ­ì— ëª¬ìŠ¤í„° ìˆìœ¼ë©´ ë•Œë¦¬ì.
 
 
         //if( actor && actor == Player.SelectedPlayer)
         //{
-        //    // ¿µ¿ª Ç¥½Ã.
+        //    // ì˜ì—­ í‘œì‹œ.
         //    //actor.moveDistance
-        //    // Ã¹¹øÂ° ÀÌµ¿À¸·Î °¥¼ö ÀÖ´Â°ÍÀ» Ã¹¹øÂ° ¶óÀÎ¿¡ Ãß°¡.
+        //    // ì²«ë²ˆì§¸ ì´ë™ìœ¼ë¡œ ê°ˆìˆ˜ ìˆëŠ”ê²ƒì„ ì²«ë²ˆì§¸ ë¼ì¸ì— ì¶”ê°€.
         //    ShowMoveDistance(actor.moveDistance);
         //}
         //else
@@ -104,10 +104,10 @@ public class BlockInfo : MonoBehaviour
             //Player.SelectedPlayer = actor as Player;
             Player.SelectedPlayer = (Player)actor;
 
-            //ÀÌµ¿ °¡´ÉÇÑ ¿µ¿ª Ç¥½Ã.
+            //ì´ë™ ê°€ëŠ¥í•œ ì˜ì—­ í‘œì‹œ.
             ShowMoveDistance(Player.SelectedPlayer.moveDistance);
 
-            // ÇöÀç À§Ä¡¿¡¼­ °ø°İ °¡´ÉÇÑ ¿µ¿ª Ç¥½Ã.
+            // í˜„ì¬ ìœ„ì¹˜ì—ì„œ ê³µê²© ê°€ëŠ¥í•œ ì˜ì—­ í‘œì‹œ.
             Player.SelectedPlayer.ShowAttackableArea();
             StageManager.GameState = GameStateType.SelectBlockToMoveOrAttackTarget;
         }
@@ -128,13 +128,14 @@ public class BlockInfo : MonoBehaviour
                 var block = item.GetComponent<BlockInfo>();
                 if (block)
                 {
-                    block.ToChangeRedColor();
+                    block.ToChangeBlueColor();
                     highLightedMoveableArea.Add(block);
                 }
             }
         }
     }
     static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
+
 
     string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;
@@ -168,7 +169,7 @@ public class BlockInfo : MonoBehaviour
         }
     }
     Renderer m_Renderer;
-    private Color m_MouseOverColor = Color.red;
+    private Color moveableColor = Color.blue;
     private Color m_OriginalColor;
     private void Awake()
     {
@@ -183,13 +184,17 @@ public class BlockInfo : MonoBehaviour
         }
     }
 
-    public void ToChangeRedColor()
+    public void ToChangeBlueColor()
     {
-        m_Renderer.material.color = m_MouseOverColor;
+        m_Renderer.material.color = moveableColor;
     }
     public void ToChangeOriginalColor()
     {
         m_Renderer.material.color = m_OriginalColor;
+    }
+    internal void ToChangeColor(Color color)
+    {
+        m_Renderer.material.color = color;
     }
 
     void OnMouseExit()

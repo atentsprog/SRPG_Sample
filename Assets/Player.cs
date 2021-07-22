@@ -133,7 +133,7 @@ public class Player : Actor
 
             if (map.ContainsKey(pos))
             {
-                if (IsEnemyExist(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
+                if (IsExistEnemy(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
                 {
                     map[pos].ToChangeColor(Color.red);
                     existEnemy = true;
@@ -144,7 +144,7 @@ public class Player : Actor
         return existEnemy;
     }
 
-    private bool IsEnemyExist(BlockInfo blockInfo)
+    private bool IsExistEnemy(BlockInfo blockInfo)
     {
         //if (blockInfo.actor == null)
         //    return false;

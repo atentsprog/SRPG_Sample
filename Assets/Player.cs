@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Player : Actor
 {
+    public override ActorTypeEnum ActorType { get => ActorTypeEnum.Plyer; }
+
     static public Player SelectedPlayer;
     Animator animator;
     void Start()
@@ -21,9 +23,9 @@ public class Player : Actor
         animator.Play(nodeName, 0, 0);
     }
 
-    internal void OnTouch(Vector3 position)
+    internal void MoveToPosition(Vector3 position)
     {
-        Vector2Int findPos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
+        Vector2Int findPos = position.ToVector2Int();//
         FindPath(findPos);
     }
     //public float moveDistanceMultiply = 1.2
@@ -63,7 +65,38 @@ public class Player : Actor
             FollowTarget.Instance.SetTarget(null);
             // 이동한 위치에는 플레이어 정보 추가
             GroundManager.Instance.AddBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player, this);
+
+            bool existAttackTarget = ShowAttackableArea();
+            if (existAttackTarget)
+                StageManager.GameState = GameStateType.SelectToAttackTarget;
+            else
+                StageManager.GameState = GameStateType.SelectPlayer;
         }
+    }
+
+    internal bool CanAttackTarget(Actor actor)
+    {
+        //같은팀을 공격대상으로 하지 않기
+        if (actor.ActorType != ActorTypeEnum.Monster)
+            return false;
+
+        // 공격 가능한 범위 안에 있는지 확인.
+        return true;
+    }
+
+    internal void AttackToTarget(Actor actor)
+    {
+        //todo:타겟 방향 바라보기.
+        StartCoroutine(AttackToTargetCo(actor));
+    }
+
+    public float attackTime = 1;
+    private IEnumerator AttackToTargetCo(Actor actor)
+    {
+        animator.Play("Attack");
+        actor.TakeHit(power);
+        yield return new WaitForSeconds(attackTime);
+        StageManager.GameState = GameStateType.SelectPlayer;
     }
 
     internal bool OnMoveable(Vector3 position, int maxDistance)
@@ -82,8 +115,9 @@ public class Player : Actor
         return false;
     }
 
-    internal void ShowAttackableArea()
+    internal bool ShowAttackableArea()
     {
+        bool existEnemy = false;
         //현재 위치에서 공격 가능한 지역을 체크하자.
         Vector2Int currentPos = transform.position.ToVector2Int();
         var map = GroundManager.Instance.blockInfoMap;
@@ -98,9 +132,12 @@ public class Player : Actor
                 if (IsEnemyExist(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
                 {
                     map[pos].ToChangeColor(Color.red);
+                    existEnemy = true;
                 }
             }
         }
+
+        return existEnemy;
     }
 
     private bool IsEnemyExist(BlockInfo blockInfo)

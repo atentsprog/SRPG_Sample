@@ -40083,6 +40083,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nickname: "\uBAAC\uC2A4\uD130"
   iconName: Monster
+  power: 10
   hp: 20
   mp: 0
   maxHp: 20

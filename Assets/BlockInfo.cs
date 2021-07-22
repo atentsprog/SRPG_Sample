@@ -21,15 +21,10 @@ public class BlockInfo : MonoBehaviour
     public float clickDistance = 1;
     void OnMouseDown()
     {
-        ClearMoveableArea();
+        //ClearMoveableArea();
         downMousePosition = Input.mousePosition;
     }
 
-    private void ClearMoveableArea()
-    {
-        highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
-        highLightedMoveableArea.Clear();
-    }
 
     void OnMouseUp()
     {
@@ -91,7 +86,25 @@ public class BlockInfo : MonoBehaviour
 
     private void SelectBlockToMoveOrAttackTarget()
     {
-        throw new NotImplementedException();
+        // 공격 대상이 있다면 공격 하자.(액터가 몬스터라면)
+        if (actor)
+        {
+            //현재 공격 하는 액터가 공격 대상으로 할 수 있는지 확인.
+            // todo:공격 범위 안에 있는지 확인해줘야함.
+            if (Player.SelectedPlayer.CanAttackTarget(actor))
+            {
+                Player.SelectedPlayer.AttackToTarget(actor);
+            }
+        }
+        else
+        {
+            if (highLightedMoveableArea.Contains(this))
+            {
+                Player.SelectedPlayer.MoveToPosition(transform.position);
+                ClearMoveableArea();
+                StageManager.GameState = GameStateType.IngPlayerMove;
+            }
+        }
     }
 
     private void SelectPlayer()
@@ -135,7 +148,11 @@ public class BlockInfo : MonoBehaviour
         }
     }
     static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
-
+    private void ClearMoveableArea()
+    {
+        highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
+        highLightedMoveableArea.Clear();
+    }
 
     string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;

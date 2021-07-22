@@ -1,3 +1,4 @@
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,10 +10,19 @@ public enum StatusType
     Die,
 }
 
+public enum ActorTypeEnum
+{
+    NotInit, // 
+    Plyer,
+    Monster,
+}
 public class Actor : MonoBehaviour
 {
-    public string nickname = "ÀÌ¸§ ÀÌ·ÂÇØÁÖ¼¼¿ä";
+    public virtual ActorTypeEnum ActorType { get => ActorTypeEnum.NotInit; }
+
+    public string nickname = "ì´ë¦„ ì´ë ¥í•´ì£¼ì„¸ìš”";
     public string iconName;
+    public int power = 10;
     public float hp = 20;
     public float mp = 0;
     public float maxHp = 20;
@@ -21,45 +31,57 @@ public class Actor : MonoBehaviour
 
     public int moveDistance = 5;
 
-    // °ø°İ ¹üÀ§¸¦ ¸ğ¾ÆµÎÀÚ.
+    // ê³µê²© ë²”ìœ„ë¥¼ ëª¨ì•„ë‘ì.
     public List<Vector2Int> attackablePoints = new List<Vector2Int>();
     private void Awake()
     {
         var attackPoints = GetComponentsInChildren<AttackPoint>(true);
 
-        // ¾ÕÂÊ¿¡ ÀÖ´Â °ø°İ Æ÷ÀÎÆ®µé.
+        // ì•ìª½ì— ìˆëŠ” ê³µê²© í¬ì¸íŠ¸ë“¤.
         foreach (var item in attackPoints)
             attackablePoints.Add(item.transform.localPosition.ToVector2Int());
 
-        // ¿À¸¥ÂÊ¿¡ ÀÖ´Â °ø°İ Æ÷ÀÎÆ®µé.
+        // ì˜¤ë¥¸ìª½ì— ìˆëŠ” ê³µê²© í¬ì¸íŠ¸ë“¤.
         transform.Rotate(0, 90, 0);
         foreach (var item in attackPoints)
             attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
 
-        // µÚÂÊ¿¡ ÀÖ´Â °ø°İ Æ÷ÀÎÆ®µé.
+        // ë’¤ìª½ì— ìˆëŠ” ê³µê²© í¬ì¸íŠ¸ë“¤.
         transform.Rotate(0, 90, 0);
         foreach (var item in attackPoints)
             attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
 
-        // ¿ŞÂÊ¿¡ ÀÖ´Â °ø°İ Æ÷ÀÎÆ®µé.
+        // ì™¼ìª½ì— ìˆëŠ” ê³µê²© í¬ì¸íŠ¸ë“¤.
         transform.Rotate(0, 90, 0);
         foreach (var item in attackPoints)
             attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
 
-        // ´Ù½Ã ¾ÕÂÊ º¸µµ·Ï µ¹¸².
+        // ë‹¤ì‹œ ì•ìª½ ë³´ë„ë¡ ëŒë¦¼.
         transform.Rotate(0, 90, 0);
+    }
+
+    internal virtual void TakeHit(int power)
+    {
+        //ë§ì€ ë°ë¯¸ì§€ í‘œì‹œí•˜ì.
+        hp -= power;
     }
 }
 
 public class Monster : Actor
 {
-    private void Awake()
-    {
-        
-    }
+    public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
+
     Animator animator;
     void Start()
     {
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster, this);
+        animator = GetComponentInChildren<Animator>();
+    }
+
+    internal override void TakeHit(int power)
+    {
+        //ë§ì€ ë°ë¯¸ì§€ í‘œì‹œí•˜ì.
+        hp -= power;
+        animator.Play("TakeHit");
     }
 }

@@ -12,16 +12,20 @@ static public class GroundExtention
         return new Vector2Int( Mathf.RoundToInt(v3.x)
             , Mathf.RoundToInt(v3.z));
     }
-    static public Vector3 ToVector2Int(this Vector2Int v2Int, int y)
+    static public Vector3 ToVector2Int(this Vector2Int v2Int, float y)
     {
         return new Vector3(v2Int.x, y, v2Int.y);
+    }
+    static public Vector3 ToVector3Snap(this Vector3 v3)
+    {
+        return new Vector3(Mathf.Round(v3.x), v3.y, Mathf.Round(v3.z));
     }
 }
 
 public class GroundManager : SingletonMonoBehavior<GroundManager>
 {
     public Vector2Int playerPos; // 여기서 부터 시작
-    public Dictionary<Vector2Int, BlockType> map = new Dictionary<Vector2Int, BlockType>(); // A*에서 사용
+    //public Dictionary<Vector2Int, BlockType> blockInfoMap = new Dictionary<Vector2Int, BlockType>(); // A*에서 사용
     public Dictionary<Vector2Int, BlockInfo> blockInfoMap = new Dictionary<Vector2Int, BlockInfo>();
     public BlockType passableValues = BlockType.Walkable | BlockType.Water;
     public Transform player;
@@ -43,7 +47,7 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
             var pos = item.transform.position;
             //Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z); <-- 에러 코드
             Vector2Int intPos = pos.ToVector2Int();
-            map[intPos] = item.blockType;
+            //blockInfoMap[intPos] = item.blockType;
 
             if (useDebugMode)
             {
@@ -60,13 +64,13 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
     public void AddBlockInfo(Vector3 position, BlockType addBlockType, Actor actor)
     {
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-        if (map.ContainsKey(pos) == false)
+        if (blockInfoMap.ContainsKey(pos) == false)
         {
             Debug.LogError($"{pos} 위치에 맵이 없다");
         }
 
         //map[pos] = map[pos] | addBlockType;   // 기존 값에 추가하겠다.
-        map[pos] |= addBlockType;               // 기존 값에 추가하겠다.
+        //blockInfoMap[pos] |= addBlockType;               // 기존 값에 추가하겠다.
         blockInfoMap[pos].blockType |= addBlockType;
         blockInfoMap[pos].actor = actor;
         if (useDebugMode)
@@ -75,12 +79,12 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
     public void RemoveBlockInfo(Vector3 position, BlockType removeBlockType)
     {
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-        if (map.ContainsKey(pos) == false)
+        if (blockInfoMap.ContainsKey(pos) == false)
         {
             Debug.LogError($"{pos} 위치에 맵이 없다");
         }
 
-        map[pos] &= ~removeBlockType;               // 기존 값에서 삭제하겠다.
+        //blockInfoMap[pos] &= ~removeBlockType;               // 기존 값에서 삭제하겠다.
         blockInfoMap[pos].blockType &= ~removeBlockType;
         blockInfoMap[pos].actor = null;
         if (useDebugMode)

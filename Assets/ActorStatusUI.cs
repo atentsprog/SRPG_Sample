@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class ActorStatusUI : SingletonMonoBehavior<ActorStatusUI>
 {
     Text status;
-    Text nickname;
+    Text nickname; 
+    Image icon;
+
 
     RectTransform mPBarGauge;
     RectTransform mPBar;
@@ -20,7 +22,9 @@ public class ActorStatusUI : SingletonMonoBehavior<ActorStatusUI>
     {
         base.Show();
 
-        //actor.nickname
+        icon = transform.Find("Icon").GetComponent<Image>();
+        icon.sprite = Resources.Load<Sprite>("Icon/" + actor.iconName);
+
         status = transform.Find("Status").GetComponent<Text>();
         nickname = transform.Find("Name").GetComponent<Text>();
 

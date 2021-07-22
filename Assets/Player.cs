@@ -40,8 +40,8 @@ public class Player : Actor
             , Mathf.RoundToInt(player.position.z));
         playerPos.x = Mathf.RoundToInt(player.position.x);
         playerPos.y = Mathf.RoundToInt(player.position.z);
-        var map = GroundManager.Instance.map;
-        List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
+        var map = GroundManager.Instance.blockInfoMap;
+        List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
         if (path.Count == 0)
             Debug.Log("길이 없다");
         else
@@ -70,8 +70,8 @@ public class Player : Actor
     {
         Vector2Int goalPos = position.ToVector2Int();
         Vector2Int playerPos = transform.position.ToVector2Int();
-        var map = GroundManager.Instance.map;
-        var path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
+        var map = GroundManager.Instance.blockInfoMap;
+        var path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
         if (path.Count == 0)
             Debug.Log("길 업따 !");
         else if (path.Count > maxDistance + 1)

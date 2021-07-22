@@ -26,6 +26,7 @@ public class Player : Actor
         Vector2Int findPos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         FindPath(findPos);
     }
+    //public float moveDistanceMultiply = 1.2
     void FindPath(Vector2Int goalPos)
     {
         StopAllCoroutines();
@@ -65,7 +66,7 @@ public class Player : Actor
         }
     }
 
-    internal bool OnMoveable(Vector3 position)
+    internal bool OnMoveable(Vector3 position, int maxDistance)
     {
         Vector2Int goalPos = position.ToVector2Int();
         Vector2Int playerPos = transform.position.ToVector2Int();
@@ -73,7 +74,7 @@ public class Player : Actor
         var path = PathFinding2D.find4(playerPos, goalPos, map, passableValues);
         if (path.Count == 0)
             Debug.Log("길 업따 !");
-        else if (path.Count > 5)
+        else if (path.Count > maxDistance + 1)
             Debug.Log("이동모태 !");
         else
             return true;

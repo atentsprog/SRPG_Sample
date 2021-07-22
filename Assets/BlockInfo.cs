@@ -54,11 +54,14 @@ public class BlockInfo : MonoBehaviour
     private void ShowMoveDistance(int moveDistance)
     {
         Quaternion rotate = Quaternion.Euler(0, 45, 0);
-        var blocks = Physics.OverlapSphere(transform.position, moveDistance);
+        Vector3 halfExtents = (moveDistance / Mathf.Sqrt(2)) * 0.99f * Vector3.one;
+
+        var blocks = Physics.OverlapBox(transform.position
+            , halfExtents, rotate);
 
         foreach (var item in blocks)
         {
-            if (Player.SelectPlayer.OnMoveable(item.transform.position))
+            if (Player.SelectPlayer.OnMoveable(item.transform.position, moveDistance))
             {
                 var block = item.GetComponent<BlockInfo>();
                 if (block)
@@ -83,8 +86,10 @@ public class BlockInfo : MonoBehaviour
             debugTextGos = textMeshGo;
             textMeshGo.transform.localPosition = Vector3.zero;
         }
+
         var intPos = transform.position.ToVector2Int();
-        name = $"{intPos.x}:{intPos.y}";
+        name = $"{name} {intPos.x}:{intPos.y}";
+
         StringBuilder debugText = new StringBuilder();// $"{item.blockType}:{intPos.y}";
                                                       //ContaingText(debugText, item, BlockType.Walkable);
         ContaingText(debugText, BlockType.Water);

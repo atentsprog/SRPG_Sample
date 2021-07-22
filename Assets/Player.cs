@@ -6,11 +6,11 @@ using UnityEngine;
 
 public class Player : Actor
 {
-    static public Player SelectPlayer;
+    static public Player SelectedPlayer;
     Animator animator;
     void Start()
     {
-        SelectPlayer = this;
+        //SelectedPlayer = this;
         animator = GetComponentInChildren<Animator>();
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
         FollowTarget.Instance.SetTarget(transform);
@@ -47,9 +47,9 @@ public class Player : Actor
         else
         {
             // 월래 위치에선 플레이어 정보 삭제
-            GroundManager.Instance.RemoveBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player);
-            Player.SelectPlayer.PlayAnimation("Walk");
-            FollowTarget.Instance.SetTarget(Player.SelectPlayer.transform);
+            GroundManager.Instance.RemoveBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player);
+            Player.SelectedPlayer.PlayAnimation("Walk");
+            FollowTarget.Instance.SetTarget(Player.SelectedPlayer.transform);
             path.RemoveAt(0);
             foreach (var item in path)
             {
@@ -59,10 +59,10 @@ public class Player : Actor
                 player.DOMove(playerNewPos, moveTimePerUnit).SetEase(moveEase);
                 yield return new WaitForSeconds(moveTimePerUnit);
             }
-            Player.SelectPlayer.PlayAnimation("Idle");
+            Player.SelectedPlayer.PlayAnimation("Idle");
             FollowTarget.Instance.SetTarget(null);
             // 이동한 위치에는 플레이어 정보 추가
-            GroundManager.Instance.AddBlockInfo(Player.SelectPlayer.transform.position, BlockType.Player, this);
+            GroundManager.Instance.AddBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player, this);
         }
     }
 
@@ -80,6 +80,11 @@ public class Player : Actor
             return true;
 
         return false;
+    }
+
+    internal void ShowAttackableArea()
+    {
+        throw new NotImplementedException();
     }
 
     public Ease moveEase = Ease.InBounce;

@@ -81,7 +81,13 @@ public class BlockInfo : MonoBehaviour
 
     private void SelectToAttackTarget()
     {
-        throw new NotImplementedException();
+        if (Player.SelectedPlayer.enemyExistPoint.Contains(this))
+        {
+            if (Player.SelectedPlayer.CanAttackTarget(actor))
+            {
+                Player.SelectedPlayer.AttackToTarget(actor);
+            }
+        }
     }
 
     private void SelectBlockToMoveOrAttackTarget()
@@ -100,6 +106,7 @@ public class BlockInfo : MonoBehaviour
         {
             if (highLightedMoveableArea.Contains(this))
             {
+                Player.SelectedPlayer.ClearEnemyExistPoint();
                 Player.SelectedPlayer.MoveToPosition(transform.position);
                 ClearMoveableArea();
                 StageManager.GameState = GameStateType.IngPlayerMove;

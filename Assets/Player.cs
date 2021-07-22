@@ -121,12 +121,21 @@ public class Player : Actor
         return true;
     }
 
+    public void ClearEnemyExistPoint()
+    {
+        enemyExistPoint.ForEach(x => x.ToChangeOriginalColor());
+        enemyExistPoint.Clear();
+    }
+
+    public List<BlockInfo> enemyExistPoint = new List<BlockInfo>();
     internal bool ShowAttackableArea()
     {
         bool existEnemy = false;
         //현재 위치에서 공격 가능한 지역을 체크하자.
         Vector2Int currentPos = transform.position.ToVector2Int();
         var map = GroundManager.Instance.blockInfoMap;
+
+        Debug.Assert(enemyExistPoint.Count == 0);
 
         //공격가능한 지역에 적이 있는지 확인하자.
         foreach (var item in attackablePoints)
@@ -137,6 +146,7 @@ public class Player : Actor
             {
                 if (IsExistEnemy(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
                 {
+                    enemyExistPoint.Add(map[pos]);
                     map[pos].ToChangeColor(Color.red);
                     existEnemy = true;
                 }

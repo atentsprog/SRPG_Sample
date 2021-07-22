@@ -106,13 +106,17 @@ public class Player : Actor
         var map = GroundManager.Instance.blockInfoMap;
         var path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
         if (path.Count == 0)
-            Debug.Log("길 업따 !");
+        {
+            //Debug.Log("길 업따 !");
+            return false;
+        }
         else if (path.Count > maxDistance + 1)
-            Debug.Log("이동모태 !");
-        else
-            return true;
+        {
+            //Debug.Log("이동모태 !");
+            return false;
+        }
 
-        return false;
+        return true;
     }
 
     internal bool ShowAttackableArea()

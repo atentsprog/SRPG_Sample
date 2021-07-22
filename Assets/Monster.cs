@@ -12,6 +12,7 @@ public enum StatusType
 public class Actor : MonoBehaviour
 {
     public string nickname = "이름 이력해주세요";
+    public string iconName;
     public float hp = 20;
     public float mp = 0;
     public float maxHp = 20;

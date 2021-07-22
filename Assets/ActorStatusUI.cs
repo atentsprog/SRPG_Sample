@@ -15,6 +15,7 @@ public class ActorStatusUI : SingletonMonoBehavior<ActorStatusUI>
     RectTransform hPBar;
     Image mPBarGaugeImage;
     Image hPBarGaugeImage;
+    Image icon;
 
     internal void Show(Actor actor)
     {
@@ -23,6 +24,7 @@ public class ActorStatusUI : SingletonMonoBehavior<ActorStatusUI>
         //actor.nickname
         status = transform.Find("Status").GetComponent<Text>();
         nickname = transform.Find("Name").GetComponent<Text>();
+        icon = transform.Find("Icon").GetComponent<Image>();
 
 
         mPBarGauge = transform.Find("MPBar/MPBarGauge").GetComponent<RectTransform>();
@@ -47,5 +49,7 @@ public class ActorStatusUI : SingletonMonoBehavior<ActorStatusUI>
 
         nickname.text = actor.nickname;
         status.text = actor.status.ToString();
+
+        icon.sprite = Resources.Load<Sprite>("Icon/" + actor.iconName);
     }
 }

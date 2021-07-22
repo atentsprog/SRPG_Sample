@@ -93,6 +93,8 @@ public class Player : Actor
     public float attackTime = 1;
     private IEnumerator AttackToTargetCo(Actor actor)
     {
+        LookAtOnlyYAxis(actor.transform.position);
+
         animator.Play("Attack");
         actor.TakeHit(power);
         yield return new WaitForSeconds(attackTime);

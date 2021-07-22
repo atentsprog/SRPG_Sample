@@ -65,6 +65,12 @@ public class Actor : MonoBehaviour
         //맞은 데미지 표시하자.
         hp -= power;
     }
+
+    protected void LookAtOnlyYAxis(Vector3 position)
+    {
+        var lookAtPos = new Vector3(position.x, transform.position.y, position.z);
+        transform.LookAt(lookAtPos);
+    }
 }
 
 public class Monster : Actor

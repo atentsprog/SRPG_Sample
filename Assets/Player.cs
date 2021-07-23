@@ -86,15 +86,16 @@ public class Player : Actor
 
     internal void AttackToTarget(Actor actor)
     {
-        //todo:타겟 방향 바라보기.
         StartCoroutine(AttackToTargetCo(actor));
     }
 
     public float attackTime = 1;
-    private IEnumerator AttackToTargetCo(Actor actor)
+    private IEnumerator AttackToTargetCo(Actor attackTarget)
     {
+        transform.LookAt(attackTarget.transform);
+
         animator.Play("Attack");
-        actor.TakeHit(power);
+        attackTarget.TakeHit(power);
         yield return new WaitForSeconds(attackTime);
         StageManager.GameState = GameStateType.SelectPlayer;
     }

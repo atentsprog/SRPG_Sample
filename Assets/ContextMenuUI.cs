@@ -15,7 +15,7 @@ public class ContextMenuUI : BaseUI<ContextMenuUI>
         Dictionary<string, UnityAction> menus = new Dictionary<string, UnityAction>();
         menus.Add("턴 종료(F10)", EndTurnPlayer);
         menus.Add("테스트 메뉴", TestMenu);
-        menus.Add("테스트 메뉴2",()=> { print("무명함수"); });
+        menus.Add("테스트 메뉴2",()=> { print("무명함수"); OnClick(); });
 
         foreach( var item in menus)
         {
@@ -30,17 +30,26 @@ public class ContextMenuUI : BaseUI<ContextMenuUI>
     private void TestMenu()
     {
         print("TestMenu");
+        OnClick();
     }
 
     private void EndTurnPlayer()
     {
         print("EndTurnPlayer");
+        OnClick();
+    }
+
+    private void OnClick()
+    {
+        Close();
     }
 
     internal void Show(Vector3 uiPosition)
     {
         base.Show();
 
+        //https://youtu.be/zKjVdTQbV9w?t=512  참고
+        // 스크린 포지션을 캔바스 포지션으로 수정 ( 마우스 클릭 지점을 UI 위치로 옮길때 사용)
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             transform.parent.GetComponent<RectTransform>()
             , uiPosition, null, out Vector2 localPoint);

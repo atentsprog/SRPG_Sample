@@ -20,7 +20,10 @@ public class StageManager : SingletonMonoBehavior<StageManager>
     static public GameStateType GameState
     {
         get => Instance.gameState;
-        set => Instance.gameState = value;
+        set {
+            NotifyUI.Instance.Show(value.ToString(), 10);
+            Instance.gameState = value;
+        }
     }
     private void Start()
     {

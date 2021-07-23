@@ -37,6 +37,13 @@ public class StageManager : SingletonMonoBehavior<StageManager>
 
         ShowNextTurn();
     }
+    private void ProcessEndTurnPlayer()
+    {
+        CenterNotifyUI.Instance.Show($"플레이어의 {turn}턴을 종료합니다.", 1.5f);
+
+        GameState = GameStateType.MonsterTurn;
+    }
+
     public void ProcessNextTurn()
     {
         turn++;
@@ -53,6 +60,16 @@ public class StageManager : SingletonMonoBehavior<StageManager>
 
     public void ShowNextTurn()
     {
-        CenterNotifyUI.Instance.Show($"{turn}턴 시작");
+        CenterNotifyUI.Instance.Show($"{turn}턴 시작", 1.5f);
     }
+
+    private void Update()
+    {
+        if( Input.GetKeyDown(KeyCode.Alpha1))
+            ProcessEndTurnPlayer();
+
+        if( Input.GetKeyDown(KeyCode.Alpha2))
+            ProcessNextTurn();
+    }
+
 }

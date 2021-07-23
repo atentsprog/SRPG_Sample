@@ -45,7 +45,7 @@ public class Player : Actor
         StopAllCoroutines();
         StartCoroutine(FindPathCo(goalPos));
     }
-    public BlockType passableValues = BlockType.Walkable | BlockType.Water;
+
     IEnumerator FindPathCo(Vector2Int goalPos)
     {
         Transform player = transform;
@@ -143,40 +143,21 @@ public class Player : Actor
         enemyExistPoint.Clear();
     }
 
-    public List<BlockInfo> enemyExistPoint = new List<BlockInfo>();
     internal bool ShowAttackableArea()
     {
-        bool existEnemy = false;
-        //현재 위치에서 공격 가능한 지역을 체크하자.
-        Vector2Int currentPos = transform.position.ToVector2Int();
-        var map = GroundManager.Instance.blockInfoMap;
+        bool existEnemy = SetAttackableEnemyPoint().Count > 0;
 
-        Debug.Assert(enemyExistPoint.Count == 0);
-
-        //공격가능한 지역에 적이 있는지 확인하자.
-        foreach (var item in attackablePoints)
-        {
-            Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
-
-            if (map.ContainsKey(pos))
-            {
-                if (IsExistEnemy(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
-                {
-                    enemyExistPoint.Add(map[pos]);
-                    map[pos].ToChangeColor(Color.red);
-                    existEnemy = true;
-                }
-            }
-        }
+        enemyExistPoint.ForEach(x => x.ToChangeColor(Color.red));
 
         return existEnemy;
     }
 
-    private bool IsExistEnemy(BlockInfo blockInfo)
-    {
-        //if (blockInfo.actor == null)
-        //    return false;
+    public Ease moveEase = Ease.InBounce;
+    public float moveTimePerUnit = 0.3f;
 
+
+    protected override bool IsExistEnemy(BlockInfo blockInfo)
+    {
         if (blockInfo.blockType.HasFlag(BlockType.Monster) == false)
             return false;
 
@@ -184,7 +165,4 @@ public class Player : Actor
 
         return true;
     }
-
-    public Ease moveEase = Ease.InBounce;
-    public float moveTimePerUnit = 0.3f;
 }

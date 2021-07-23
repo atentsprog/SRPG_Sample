@@ -83,10 +83,52 @@ public class Actor : MonoBehaviour
         var lookAtPos = new Vector3(position.x, transform.position.y, position.z);
         transform.LookAt(lookAtPos);
     }
+
+    public List<BlockInfo> enemyExistPoint = new List<BlockInfo>();
+    public BlockType passableValues = BlockType.Walkable | BlockType.Water;
+
+    public List<BlockInfo> SetAttackableEnemyPoint()
+    {
+        //현재 위치에서 공격 가능한 지역을 체크하자.
+        Vector2Int currentPos = transform.position.ToVector2Int();
+        var map = GroundManager.Instance.blockInfoMap;
+
+        Debug.Assert(enemyExistPoint.Count == 0);
+
+        //공격가능한 지역에 적이 있는지 확인하자.
+        foreach (var item in attackablePoints)
+        {
+            Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
+
+            if (map.ContainsKey(pos))
+            {
+                if (IsExistEnemy(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
+                {
+                    enemyExistPoint.Add(map[pos]);
+                }
+            }
+        }
+
+        return enemyExistPoint;
+    }
+
+    protected virtual bool IsExistEnemy(BlockInfo blockInfo)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class Monster : Actor
-{
+{    protected override bool IsExistEnemy(BlockInfo blockInfo)
+    {
+        if (blockInfo.blockType.HasFlag(BlockType.Player) == false)
+            return false;
+
+        Debug.Assert(blockInfo.actor != null, "액터는 꼭 있어야 해!");
+
+        return true;
+    }
+
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
 
     Animator animator;
@@ -119,5 +161,43 @@ public class Monster : Actor
 
         hp -= power;
         animator.Play("TakeHit");
+    }
+
+    public float attackTime = 1;
+    internal IEnumerator AttackTarget(BlockInfo target)
+    {
+        Player player = target.actor as Player;
+        animator.Play("Attack");
+        yield return new WaitForSeconds(attackTime);
+        player.TakeHit(power);
+    }
+
+    internal Actor FindNearestAttackTarget()
+    {
+        Player nearestPlayer = null;
+        int smallestStep = int.MaxValue;
+
+        var mPos = transform.position.ToVector2Int();
+        var map = GroundManager.Instance.blockInfoMap;
+        foreach (var player in Player.Players)
+        {
+            var destPos = player.transform.position.ToVector2Int();
+
+            List<Vector2Int> path = PathFinding2D.find4(
+                mPos, destPos, map, passableValues);
+            if (path.Count < smallestStep)
+            {
+                nearestPlayer = player; 
+                smallestStep = path.Count;
+            }
+        }
+        
+
+        return nearestPlayer;
+    }
+
+    internal IEnumerator MoveToTarget(object target)
+    {
+        yield return null;
     }
 }

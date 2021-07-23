@@ -42,6 +42,34 @@ public class StageManager : SingletonMonoBehavior<StageManager>
         CenterNotifyUI.Instance.Show($"플레이어의 {turn}턴을 종료합니다.", 1.5f);
 
         GameState = GameStateType.MonsterTurn;
+        StartCoroutine(ProcessMonsterTurnCo());
+    }
+
+    private IEnumerator ProcessMonsterTurnCo()
+    {
+        /// 씬에 있는 모든 움직일 수 있는 몬스터를 대상으로 한다.
+        /// 1. 즉시 공격 가능한 대상있는지 확인
+        ///  1-1. 있으면 즉시 공격
+        ///  1-2. 없으면가장 가까운 공격대상으로 이동.
+        ///     공격 가능하면 공격
+        foreach(var m in Monster.Monsters)
+        {
+            var attackTargets = m.SetAttackableEnemyPoint();
+            if(attackTargets.Count > 0) // 공격할 대상이 있다.
+            {
+                //첫번째 공격 대상을 선택해서 공격하자.
+                var target = attackTargets[0];
+                yield return StartCoroutine(m.AttackTarget(target));
+            }
+            else
+            {
+                //없다. 가장 가까운 공격대상으로 이동하자.
+                var target = m.FindNearestAttackTarget();
+                yield return StartCoroutine(m.MoveToTarget(target));
+            }
+        }
+
+        ProcessNextTurn();
     }
 
     public void ProcessNextTurn()
@@ -51,6 +79,8 @@ public class StageManager : SingletonMonoBehavior<StageManager>
         ClearActorFlag();
 
         ShowNextTurn();
+
+        GameState = GameStateType.SelectPlayer;
     }
 
     private void ClearActorFlag()

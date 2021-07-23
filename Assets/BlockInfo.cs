@@ -71,10 +71,6 @@ public class BlockInfo : MonoBehaviour
         //    Player.SelectedPlayer.OnTouch(transform.position);
     }
 
-    private void AttackToTarget()
-    {
-        throw new NotImplementedException();
-    }
 
     private void SelectToAttackTarget()
     {
@@ -121,12 +117,19 @@ public class BlockInfo : MonoBehaviour
             //Player.SelectedPlayer = actor as Player;
             Player.SelectedPlayer = (Player)actor;
 
+            if (Player.SelectedPlayer.CompleteTurn)
+                NotifyUI.Instance.Show("모든 행동이 끝난 캐릭터 입니다");
+
             //이동 가능한 영역 표시.
-            ShowMoveDistance(Player.SelectedPlayer.moveDistance);
+            if (Player.SelectedPlayer.completeMove == false)
+                ShowMoveDistance(Player.SelectedPlayer.moveDistance);
 
             // 현재 위치에서 공격 가능한 영역 표시.
-            Player.SelectedPlayer.ShowAttackableArea();
-            StageManager.GameState = GameStateType.SelectBlockToMoveOrAttackTarget;
+            if (Player.SelectedPlayer.completeAct == false)
+            {
+                Player.SelectedPlayer.ShowAttackableArea();
+                StageManager.GameState = GameStateType.SelectBlockToMoveOrAttackTarget;
+            }
         }
     }
 
@@ -151,14 +154,14 @@ public class BlockInfo : MonoBehaviour
             }
         }
     }
-    static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
+    static readonly List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
     private void ClearMoveableArea()
     {
         highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
         highLightedMoveableArea.Clear();
     }
 
-    string debugTextPrefab = "DebugTextPrefab";
+    readonly string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;
     internal Actor actor;
 

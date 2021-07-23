@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NotifyUI : SingletonMonoBehavior<NotifyUI>
+public class CenterNotifyUI : SingletonMonoBehavior<CenterNotifyUI>
 {
     Text contentsText;
     protected override void OnInit()

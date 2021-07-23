@@ -6,10 +6,21 @@ using UnityEngine;
 
 public class Player : Actor
 {
+    public static List<Player> Players = new List<Player>();
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Plyer; }
 
     static public Player SelectedPlayer;
     Animator animator;
+    new private void Awake()
+    {
+        base.Awake();
+        Players.Add(this);
+    }
+    new private void OnDestroy()
+    {
+        base.OnDestroy();
+        Players.Remove(this);
+    }
     void Start()
     {
         //SelectedPlayer = this;
@@ -66,6 +77,8 @@ public class Player : Actor
             // 이동한 위치에는 플레이어 정보 추가
             GroundManager.Instance.AddBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player, this);
 
+            completeMove = true;
+
             bool existAttackTarget = ShowAttackableArea();
             if (existAttackTarget)
                 StageManager.GameState = GameStateType.SelectToAttackTarget;
@@ -88,7 +101,6 @@ public class Player : Actor
     {
         ClearEnemyExistPoint();
 
-        //todo:타겟 방향 바라보기.
         StartCoroutine(AttackToTargetCo(actor));
     }
 
@@ -100,6 +112,8 @@ public class Player : Actor
         animator.Play("Attack");
         actor.TakeHit(power);
         yield return new WaitForSeconds(attackTime);
+
+        completeAct = true;
         StageManager.GameState = GameStateType.SelectPlayer;
     }
 

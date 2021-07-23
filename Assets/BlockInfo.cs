@@ -45,9 +45,6 @@ public class BlockInfo : MonoBehaviour
             case GameStateType.SelectToAttackTarget:
                 SelectToAttackTarget();
                 break;
-            case GameStateType.AttackToTarget:
-                AttackToTarget();
-                break;
 
             case GameStateType.NotInit:
             case GameStateType.IngPlayerMove:

@@ -9,7 +9,7 @@ public enum GameStateType
     SelectBlockToMoveOrAttackTarget, // 이동혹은 공격 타겟을 선택.
     IngPlayerMove,              // 플레이어 이동중
     SelectToAttackTarget,       // 이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
-    AttackToTarget,
+    //AttackToTarget, // 의미 없어서 삭제
     // 모든 플레이어 선택했다면 MonsterTurn을 진행 시킨다.
     MonsterTurn,
 }

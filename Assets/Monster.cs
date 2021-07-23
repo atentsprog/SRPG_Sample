@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum StatusType
@@ -111,6 +112,11 @@ public class Monster : Actor
     internal override void TakeHit(int power)
     {
         //맞은 데미지 표시하자.
+        var go = (GameObject)Instantiate(Resources.Load("DamageText"), transform);
+        go.transform.localPosition = new Vector3(0, 1.3f, 0);
+        go.GetComponent<TextMeshPro>().text = power.ToString();
+        Destroy(go, 2);
+
         hp -= power;
         animator.Play("TakeHit");
     }

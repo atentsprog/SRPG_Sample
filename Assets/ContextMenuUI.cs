@@ -41,12 +41,11 @@ public class ContextMenuUI : BaseUI<ContextMenuUI>
     {
         base.Show();
 
-        RectTransform rt = GetComponent<RectTransform>();
-        rt.anchoredPosition = uiPosition;
-    }
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            transform.parent.GetComponent<RectTransform>()
+            , uiPosition, null, out Vector2 localPoint);
 
-    //internal void ShowStageMenu()
-    //{
-    //    base.Show();
-    //}
+        RectTransform rt = GetComponent<RectTransform>();
+        rt.anchoredPosition = localPoint;
+    }
 }

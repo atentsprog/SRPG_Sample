@@ -7266,9 +7266,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1102056711}
     m_Modifications:
+    - target: {fileID: 7489768313714227175, guid: 0a35f2156e2ab8046a9d57205ef6a108, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8323287582217066648, guid: 0a35f2156e2ab8046a9d57205ef6a108, type: 3}
       propertyPath: m_Name
       value: ActorStatusUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8323287582217066648, guid: 0a35f2156e2ab8046a9d57205ef6a108, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8467311673787376726, guid: 0a35f2156e2ab8046a9d57205ef6a108, type: 3}
       propertyPath: m_Pivot.x

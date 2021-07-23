@@ -71,6 +71,8 @@ public class Player : Actor
                 StageManager.GameState = GameStateType.SelectToAttackTarget;
             else
                 StageManager.GameState = GameStateType.SelectPlayer;
+
+            completeMove = true;
         }
     }
 
@@ -86,6 +88,8 @@ public class Player : Actor
 
     internal void AttackToTarget(Actor actor)
     {
+        ClearEnemyExistPoint();
+
         StartCoroutine(AttackToTargetCo(actor));
     }
 
@@ -97,6 +101,8 @@ public class Player : Actor
         animator.Play("Attack");
         attackTarget.TakeHit(power);
         yield return new WaitForSeconds(attackTime);
+
+        completeAct = true;
         StageManager.GameState = GameStateType.SelectPlayer;
     }
 
@@ -106,19 +112,28 @@ public class Player : Actor
         Vector2Int playerPos = transform.position.ToVector2Int();
         var map = GroundManager.Instance.blockInfoMap;
         var path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
-        if (path.Count == 0)
-            Debug.Log("길 업따 !");
-        else if (path.Count > maxDistance + 1)
-            Debug.Log("이동모태 !");
-        else
-            return true;
 
-        return false;
+        if (path.Count == 0 || path.Count > maxDistance + 1)
+            return false;
+
+        //if (path.Count == 0)
+        //    Debug.Log("길 업따 !");
+        //else if (path.Count > maxDistance + 1)
+        //    Debug.Log("이동모태 !");
+        //else
+        //    return true;
+
+        return true;
     }
 
+    public void ClearEnemyExistPoint()
+    {
+        enemyExistPoint.ForEach( x => x.ToChangeOriginalColor());
+        enemyExistPoint.Clear();
+    }
+    public List<BlockInfo> enemyExistPoint = new List<BlockInfo>();
     internal bool ShowAttackableArea()
     {
-        bool existEnemy = false;
         //현재 위치에서 공격 가능한 지역을 체크하자.
         Vector2Int currentPos = transform.position.ToVector2Int();
         var map = GroundManager.Instance.blockInfoMap;
@@ -132,13 +147,14 @@ public class Player : Actor
             {
                 if (IsEnemyExist(map[pos])) //map[pos]에 적이 있는가? -> 적인지 판단은 actorType으로 하자.
                 {
-                    map[pos].ToChangeColor(Color.red);
-                    existEnemy = true;
+                    enemyExistPoint.Add(map[pos]);
                 }
             }
         }
 
-        return existEnemy;
+        enemyExistPoint.ForEach(x => x.ToChangeColor(Color.red));
+
+        return enemyExistPoint.Count > 0;
     }
 
     private bool IsEnemyExist(BlockInfo blockInfo)

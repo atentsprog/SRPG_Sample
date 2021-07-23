@@ -42,7 +42,7 @@ public class BlockInfo : MonoBehaviour
             case GameStateType.SelectBlockToMoveOrAttackTarget:
                 SelectBlockToMoveOrAttackTarget();
                 break;
-            case GameStateType.SelectToAttackTarget:
+            case GameStateType.SelectToAttackTarget:  //이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
                 SelectToAttackTarget();
                 break;
             case GameStateType.AttackToTarget:
@@ -79,9 +79,19 @@ public class BlockInfo : MonoBehaviour
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// 이동후에 공격할 타겟일 수 있는 블럭을 선택했음.
+    /// 블락에 공격할 타겟이 있고 공격 가능한 타겟이면 공격
+    /// </summary>
     private void SelectToAttackTarget()
     {
-        throw new NotImplementedException();
+        if (Player.SelectedPlayer.enemyExistPoint.Contains(this))
+        {
+            if (Player.SelectedPlayer.CanAttackTarget(actor))
+            {
+                Player.SelectedPlayer.AttackToTarget(actor);
+            }
+        }
     }
 
     private void SelectBlockToMoveOrAttackTarget()
@@ -93,13 +103,16 @@ public class BlockInfo : MonoBehaviour
             // todo:공격 범위 안에 있는지 확인해줘야함.
             if (Player.SelectedPlayer.CanAttackTarget(actor))
             {
+                ClearMoveableArea();
                 Player.SelectedPlayer.AttackToTarget(actor);
             }
         }
         else
         {
+            // 플레이어 이동블락 클릭
             if (highLightedMoveableArea.Contains(this))
             {
+                Player.SelectedPlayer.ClearEnemyExistPoint();
                 Player.SelectedPlayer.MoveToPosition(transform.position);
                 ClearMoveableArea();
                 StageManager.GameState = GameStateType.IngPlayerMove;
@@ -115,18 +128,29 @@ public class BlockInfo : MonoBehaviour
         if(actor.GetType() == typeof(Player))
         {
             //Player.SelectedPlayer = actor as Player;
-            Player.SelectedPlayer = (Player)actor;
+            Player player = (Player)actor;
+            if(player.CompleteTurn)
+            {
+                CenterNotifyUI.Instance.Show(
+                    "모든 행동이 끝난 플레이어 입니다");
+                return;
+            }
+
+            Player.SelectedPlayer = player;
 
             //이동 가능한 영역 표시.
-            ShowMoveDistance(Player.SelectedPlayer.moveDistance);
+            if( player.completeMove == false)
+                ShowMoveableArea(Player.SelectedPlayer.moveDistance);
 
             // 현재 위치에서 공격 가능한 영역 표시.
-            Player.SelectedPlayer.ShowAttackableArea();
+            if( player.completeAct == false)
+                Player.SelectedPlayer.ShowAttackableArea();
+
             StageManager.GameState = GameStateType.SelectBlockToMoveOrAttackTarget;
         }
     }
 
-    private void ShowMoveDistance(int moveDistance)
+    private void ShowMoveableArea(int moveDistance)
     {
         Quaternion rotate = Quaternion.Euler(0, 45, 0);
         Vector3 halfExtents = (moveDistance / Mathf.Sqrt(2)) * 0.99f * Vector3.one;

@@ -86,6 +86,8 @@ public class Player : Actor
 
     internal void AttackToTarget(Actor actor)
     {
+        ClearEnemyExistPoint();
+
         //todo:타겟 방향 바라보기.
         StartCoroutine(AttackToTargetCo(actor));
     }

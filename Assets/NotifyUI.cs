@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class NotifyUI : SingletonMonoBehavior<NotifyUI>
 {
     Text contentsText;
-    void Start()
+    protected override void OnInit()
     {
         contentsText = transform.Find("ContentsText").GetComponent<Text>();
     }

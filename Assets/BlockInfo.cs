@@ -39,8 +39,8 @@ public class BlockInfo : MonoBehaviour
             case GameStateType.SelectPlayer:
                 SelectPlayer();
                 break;
-            case GameStateType.SelectBlockToMoveOrAttackTarget:
-                SelectBlockToMoveOrAttackTarget();
+            case GameStateType.SelectedPlayerMoveOrAct:
+                SelectedPlayerMoveOrAct();
                 break;
             case GameStateType.SelectToAttackTarget:  //이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
                 SelectToAttackTarget();
@@ -94,7 +94,7 @@ public class BlockInfo : MonoBehaviour
         }
     }
 
-    private void SelectBlockToMoveOrAttackTarget()
+    private void SelectedPlayerMoveOrAct()
     {
         // 공격 대상이 있다면 공격 하자.(액터가 몬스터라면)
         if (actor)
@@ -139,14 +139,19 @@ public class BlockInfo : MonoBehaviour
             Player.SelectedPlayer = player;
 
             //이동 가능한 영역 표시.
-            if( player.completeMove == false)
+            if (player.completeMove == false)
                 ShowMoveableArea(Player.SelectedPlayer.moveDistance);
+            else
+                CenterNotifyUI.Instance.Show("이미 이동했습니다");
+
 
             // 현재 위치에서 공격 가능한 영역 표시.
-            if( player.completeAct == false)
+            if ( player.completeAct == false)
                 Player.SelectedPlayer.ShowAttackableArea();
+            else
+                CenterNotifyUI.Instance.Show("이미 행동했습니다");
 
-            StageManager.GameState = GameStateType.SelectBlockToMoveOrAttackTarget;
+            StageManager.GameState = GameStateType.SelectedPlayerMoveOrAct;
         }
     }
 

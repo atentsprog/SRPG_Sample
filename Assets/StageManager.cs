@@ -6,7 +6,7 @@ public enum GameStateType
 {
     NotInit,                    // 아직 초기화 되지 않음.
     SelectPlayer,               // 조정할 아군 선택, 선택된 플레이어가 갈 수 있는 영역과 공격 가능한 영역 표시.
-    SelectBlockToMoveOrAttackTarget, // 이동혹은 공격 타겟을 선택.
+    SelectedPlayerMoveOrAct,     // 선택된 플레이어가 이동하거나 행동을 할 차례
     IngPlayerMove,              // 플레이어 이동중
     SelectToAttackTarget,       // 이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
     AttackToTarget,

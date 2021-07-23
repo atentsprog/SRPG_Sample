@@ -1,16 +1,16 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public enum GameStateType
 {
-    NotInit,                    // ¾ÆÁ÷ ÃÊ±âÈ­ µÇÁö ¾ÊÀ½.
-    SelectPlayer,               // Á¶Á¤ÇÒ ¾Æ±º ¼±ÅÃ, ¼±ÅÃµÈ ÇÃ·¹ÀÌ¾î°¡ °¥ ¼ö ÀÖ´Â ¿µ¿ª°ú °ø°İ °¡´ÉÇÑ ¿µ¿ª Ç¥½Ã.
-    SelectBlockToMoveOrAttackTarget, // ÀÌµ¿È¤Àº °ø°İ Å¸°ÙÀ» ¼±ÅÃ.
-    IngPlayerMove,              // ÇÃ·¹ÀÌ¾î ÀÌµ¿Áß
-    SelectToAttackTarget,       // ÀÌµ¿ÈÄ¿¡ °ø°İÇÒ Å¸°ÙÀ» ¼±ÅÃ. °ø°İÇÒ Å¸°ÙÀÌ ¾ø´Ù¸é SelectPlayer·Î º¯°æ
+    NotInit,                    // ì•„ì§ ì´ˆê¸°í™” ë˜ì§€ ì•ŠìŒ.
+    SelectPlayer,               // ì¡°ì •í•  ì•„êµ° ì„ íƒ, ì„ íƒëœ í”Œë ˆì´ì–´ê°€ ê°ˆ ìˆ˜ ìˆëŠ” ì˜ì—­ê³¼ ê³µê²© ê°€ëŠ¥í•œ ì˜ì—­ í‘œì‹œ.
+    SelectBlockToMoveOrAttackTarget, // ì´ë™í˜¹ì€ ê³µê²© íƒ€ê²Ÿì„ ì„ íƒ.
+    IngPlayerMove,              // í”Œë ˆì´ì–´ ì´ë™ì¤‘
+    SelectToAttackTarget,       // ì´ë™í›„ì— ê³µê²©í•  íƒ€ê²Ÿì„ ì„ íƒ. ê³µê²©í•  íƒ€ê²Ÿì´ ì—†ë‹¤ë©´ SelectPlayerë¡œ ë³€ê²½
     AttackToTarget,
-    // ¸ğµç ÇÃ·¹ÀÌ¾î ¼±ÅÃÇß´Ù¸é MonsterTurnÀ» ÁøÇà ½ÃÅ²´Ù.
+    // ëª¨ë“  í”Œë ˆì´ì–´ ì„ íƒí–ˆë‹¤ë©´ MonsterTurnì„ ì§„í–‰ ì‹œí‚¨ë‹¤.
     MonsterTurn,
 }
 
@@ -25,5 +25,12 @@ public class StageManager : SingletonMonoBehavior<StageManager>
     private void Start()
     {
         GameState = GameStateType.SelectPlayer;
+        CenterNotifyUI.Instance.Show("ê²Œì„ì´ ì‹œì‘ë˜ì—ˆìŠµë‹ˆë‹¤.", 1.5f);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+            ContextMenuUI.Instance.Show(Input.mousePosition);
     }
 }

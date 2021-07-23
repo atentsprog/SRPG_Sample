@@ -1,7 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+
+#pragma warning disable IDE1005 // 대리자 호출을 간단하게 만들 수 있습니다.
+#pragma warning disable IDE1006 // 명명 스타일
 
 /// <summary> A modular and easily customisable Unity MonoBehaviour for handling swipe and pinch motions on mobile. </summary>
 public class PanAndZoom : MonoBehaviour {
@@ -11,6 +14,7 @@ public class PanAndZoom : MonoBehaviour {
 
     /// <summary> Called as soon as the player touches the screen. The argument is the screen position. </summary>
     public event Action<Vector2> onStartTouch;
+
     /// <summary> Called as soon as the player stops touching the screen. The argument is the screen position. </summary>
     public event Action<Vector2> onEndTouch;
     /// <summary> Called if the player completed a quick tap motion. The argument is the screen position. </summary>

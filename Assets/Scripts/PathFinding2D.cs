@@ -1,8 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 
+#pragma warning disable IDE1006 // 명명 스타일
+#pragma warning disable IDE0039 // 로컬 함수 사용
+#pragma warning disable IDE0018 // 인라인 변수 선언
 public static class PathFinding2D
 {
     /**

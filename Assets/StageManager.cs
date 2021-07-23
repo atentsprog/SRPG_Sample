@@ -37,7 +37,7 @@ public class StageManager : SingletonMonoBehavior<StageManager>
 
         ShowNextTurn();
     }
-    public void ProcessEndTurnPlayer()
+    public void ProcessEndOfPlayerTurn()
     {
         CenterNotifyUI.Instance.Show($"플레이어의 {turn}턴을 종료합니다.", 1.5f);
 
@@ -69,7 +69,7 @@ public class StageManager : SingletonMonoBehavior<StageManager>
             ContextMenuUI.Instance.ShowStageMenu();
 
         if ( Input.GetKeyDown(KeyCode.Alpha1))
-            ProcessEndTurnPlayer();
+            ProcessEndOfPlayerTurn();
 
         if( Input.GetKeyDown(KeyCode.Alpha2))
             ProcessNextTurn();

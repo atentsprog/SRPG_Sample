@@ -51,7 +51,7 @@ public class ContextMenuUI : BaseUI<ContextMenuUI>
     private void EndTurnPlayer()
     {
         OnClickMenu();
-        StageManager.Instance.ProcessEndTurnPlayer();
+        StageManager.Instance.ProcessEndOfPlayerTurn();
     }
     
     void OnClickMenu()

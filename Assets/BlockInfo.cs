@@ -91,6 +91,11 @@ public class BlockInfo : MonoBehaviour
             {
                 Player.SelectedPlayer.AttackToTarget(actor);
             }
+            else
+            {
+                //대상을 공격할 수 없습니다.
+                NotifyUI.Instance.Show("대상을 공격할 수 없습니다.");
+            }
         }
     }
 
@@ -105,6 +110,11 @@ public class BlockInfo : MonoBehaviour
             {
                 ClearMoveableArea();
                 Player.SelectedPlayer.AttackToTarget(actor);
+            }
+            else
+            {
+                //대상을 공격할 수 없습니다.
+                NotifyUI.Instance.Show("대상을 공격할 수 없습니다.");
             }
         }
         else
@@ -142,7 +152,11 @@ public class BlockInfo : MonoBehaviour
             if (player.completeMove == false)
                 ShowMoveableArea(Player.SelectedPlayer.moveDistance);
             else
+            {
+                ToChangeBlueColor();
+                highLightedMoveableArea.Add(this);
                 CenterNotifyUI.Instance.Show("이미 이동했습니다");
+            }
 
 
             // 현재 위치에서 공격 가능한 영역 표시.

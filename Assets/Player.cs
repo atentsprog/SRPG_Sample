@@ -83,10 +83,31 @@ public class Player : Actor
             return false;
 
         // 공격 가능한 범위 안에 있는지 확인.
+        if (completeAct)
+            return false;
+
+        if (IsAttackablePosition(actor.transform.position) == false)
+            return false;
+
         return true;
     }
 
-    internal void AttackToTarget(Actor actor)
+    private bool IsAttackablePosition(Vector3 position)
+    {
+        Vector2Int currentPos = transform.position.ToVector2Int();
+        Vector2Int chekcPoint = position.ToVector2Int(); 
+
+        foreach (var item in attackablePoints)
+        {
+            Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
+            if (pos == chekcPoint)
+                return true;
+        }
+
+        return false;
+    }
+
+        internal void AttackToTarget(Actor actor)
     {
         ClearEnemyExistPoint();
 

@@ -45,9 +45,6 @@ public class BlockInfo : MonoBehaviour
             case GameStateType.SelectToAttackTarget:  //이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
                 SelectToAttackTarget();
                 break;
-            case GameStateType.AttackToTarget:
-                AttackToTarget();
-                break;
 
             case GameStateType.NotInit:
             case GameStateType.IngPlayerMove:
@@ -56,27 +53,6 @@ public class BlockInfo : MonoBehaviour
                     $"{StageManager.GameState}");
                 break;
         }
-
-        //// 이미 빨간 블럭 상태일때 다시 선택하면 빨간 블럭을 원상 복귀 시켜라.
-
-
-        //// 지금 블럭에 몬스터 있으면 때리자.
-
-
-        //if( actor && actor == Player.SelectedPlayer)
-        //{
-        //    // 영역 표시.
-        //    //actor.moveDistance
-        //    // 첫번째 이동으로 갈수 있는것을 첫번째 라인에 추가.
-        //    ShowMoveDistance(actor.moveDistance);
-        //}
-        //else
-        //    Player.SelectedPlayer.OnTouch(transform.position);
-    }
-
-    private void AttackToTarget()
-    {
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -182,7 +158,7 @@ public class BlockInfo : MonoBehaviour
             if (Player.SelectedPlayer.OnMoveable(item.transform.position, moveDistance))
             {
                 var block = item.GetComponent<BlockInfo>();
-                if (block)
+                if (block && block.actor == null)
                 {
                     block.ToChangeBlueColor();
                     highLightedMoveableArea.Add(block);
@@ -191,7 +167,7 @@ public class BlockInfo : MonoBehaviour
         }
     }
     static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
-    private void ClearMoveableArea()
+    public static void ClearMoveableArea()
     {
         highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
         highLightedMoveableArea.Clear();

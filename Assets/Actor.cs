@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum StatusType
@@ -17,6 +19,7 @@ public enum ActorTypeEnum
 }
 public class Actor : MonoBehaviour
 {
+    public static List<Actor> Actors = new List<Actor>();
     public virtual ActorTypeEnum ActorType { get => ActorTypeEnum.NotInit; }
 
     public string nickname = "이름 이력해주세요";
@@ -36,8 +39,12 @@ public class Actor : MonoBehaviour
 
     // 공격 범위를 모아두자.
     public List<Vector2Int> attackablePoints = new List<Vector2Int>();
-    private void Awake()
+    protected Animator animator;
+    public float moveTimePerUnit = 0.3f;
+    public BlockType passableValues = BlockType.Walkable | BlockType.Water;
+    protected void Awake()
     {
+        Actors.Add(this);
         var attackPoints = GetComponentsInChildren<AttackPoint>(true);
 
         // 앞쪽에 있는 공격 포인트들.
@@ -63,9 +70,48 @@ public class Actor : MonoBehaviour
         transform.Rotate(0, 90, 0);
     }
 
-    internal virtual void TakeHit(int power)
+    protected void OnDestroy()
+    {
+        Actors.Remove(this);
+    }
+
+    public float takeHitTime = 0.7f;
+    internal virtual IEnumerator TakeHitCo(int power)
     {
         //맞은 데미지 표시하자.
+        GameObject damageTextGo = (GameObject)Instantiate(Resources.Load("DamageText"), transform);
+        damageTextGo.transform.localPosition = new Vector3(0, 1.3f, 0);
+        damageTextGo.GetComponent<TextMeshPro>().text = power.ToString();
+        Destroy(damageTextGo, 2);
+
         hp -= power;
+        animator.Play("TakeHit");
+        yield return null;
+        if (hp <= 0)
+        {
+            yield return new WaitForSeconds(takeHitTime);
+            animator.Play("Die");
+            status = StatusType.Die;
+        }
+    }
+
+    public void PlayAnimation(string nodeName)
+    {
+        animator.Play(nodeName, 0, 0);
+    }
+
+    protected bool IsAttackablePosition(Vector3 position)
+    {
+        Vector2Int currentPos = transform.position.ToVector2Int();
+        Vector2Int chekcPoint = position.ToVector2Int(); 
+
+        foreach (var item in attackablePoints)
+        {
+            Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
+            if (pos == chekcPoint)
+                return true;
+        }
+
+        return false;
     }
 }

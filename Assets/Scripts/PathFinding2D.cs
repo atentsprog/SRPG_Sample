@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -70,9 +70,15 @@ public static class PathFinding2D
 
         foreach (var item in getNeighbors(currentNode.pos))
         {
-            if (map.ContainsKey(item) && passableValues.HasFlag(map[item].blockType))
+
+            if (map.ContainsKey(item))
             {
-                findTemp(openList, currentNode, item, to, getDistance);
+                BlockType groundBlockType = map[item].blockType;
+                groundBlockType &= ~BlockType.Player;
+                groundBlockType &= ~BlockType.Monster;
+
+                if(passableValues.HasFlag(groundBlockType))
+                    findTemp(openList, currentNode, item, to, getDistance);
             }
         }
         var next = openList.FindAll(obj => obj.open).Min();

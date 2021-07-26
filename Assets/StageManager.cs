@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,21 +17,23 @@ public enum GameStateType
 
 public class StageManager : SingletonMonoBehavior<StageManager>
 {
-    [SerializeField] GameStateType gameState;
+    [SerializeField] GameStateType m_gameState;
     static public GameStateType GameState
     {
-        get => Instance.gameState;
+        get => Instance.m_gameState;
         set {
-            Debug.Log($"{Instance.gameState} => {value}");
+            Debug.Log($"{Instance.m_gameState} => {value}");
 
             NotifyUI.Instance.Show(value.ToString(), 10);
-            Instance.gameState = value;
+            Instance.m_gameState = value;
         }
     }
     private void Start()
     {
         GameState = GameStateType.SelectPlayer;
-        CenterNotifyUI.Instance.Show("게임이 시작되었습니다.", 1.5f);
+
+        ShowCurrentTurn();
+        //CenterNotifyUI.Instance.Show("게임이 시작되었습니다.", 1.5f);
     }
 
     private void Update()
@@ -38,4 +41,36 @@ public class StageManager : SingletonMonoBehavior<StageManager>
         if (Input.GetKeyDown(KeyCode.Mouse1))
             ContextMenuUI.Instance.Show(Input.mousePosition);
     }
+
+    internal void EndTurnPlayer()
+    {
+        GameState = GameStateType.MonsterTurn;
+
+        StartCoroutine(MonserTurnCo());
+    }
+
+    private IEnumerator MonserTurnCo()
+    {
+        foreach(var monster in Monster.Monsters)
+        {
+            yield return monster.AutoAttackCo();
+        }
+
+        ProcessNextTurn();
+    }
+    int turn = 1;
+    private void ProcessNextTurn()
+    {
+        turn++;
+        // 몇번째 턴인지 보여주자.
+        ShowCurrentTurn();
+        // 게임상태를 SelectPlayer
+        GameState = GameStateType.SelectPlayer;
+        //// 턴 정보 초기화 해주자.
+    }
+    private void ShowCurrentTurn()
+    {
+        CenterNotifyUI.Instance.Show($"{turn}이 시작되었습니다");
+    }
+
 }

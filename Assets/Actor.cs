@@ -36,7 +36,7 @@ public class Actor : MonoBehaviour
 
     // 공격 범위를 모아두자.
     public List<Vector2Int> attackableLocalPositions = new List<Vector2Int>();
-    private void Awake()
+    protected void Awake()
     {
         var attackPoints = GetComponentsInChildren<AttackPoint>(true);
 

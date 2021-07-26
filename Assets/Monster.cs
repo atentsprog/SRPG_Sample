@@ -6,10 +6,25 @@ using UnityEngine;
 
 public class Monster : Actor
 {
-    public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
+    public static List<Monster> Monsters = new List<Monster>();
+    new protected void Awake()
+    {
+        base.Awake();
+        Monsters.Add(this);
+    }
+    protected void OnDestroy()
+    {
+        Monsters.Remove(this);
+    }
+    internal IEnumerator AutoAttackCo()
+    {
+        print("몬스터 턴 구현 해야함");
+        yield return null;
+    }
 
+    public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
     Animator animator;
-    void Start()
+    protected void Start()
     {
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster, this);
         animator = GetComponentInChildren<Animator>();

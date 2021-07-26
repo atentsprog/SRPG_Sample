@@ -46,11 +46,13 @@ public class BlockInfo : MonoBehaviour
                 SelectToAttackTarget();
                 break;
 
+            default:
             case GameStateType.NotInit:
             case GameStateType.IngPlayerMove:
             case GameStateType.MonsterTurn:
                 Debug.Log($"블럭을 클릭할 수 없는 상태 입니다:" +
                     $"{StageManager.GameState}");
+
                 break;
         }
     }

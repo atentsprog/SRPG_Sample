@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum GameStateType
@@ -12,6 +13,8 @@ public enum GameStateType
     SelectToAttackTarget,       // 이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
     // 모든 플레이어 선택했다면 MonsterTurn을 진행 시킨다.
     MonsterTurn,
+
+    GameOver,   // 모든 플레이어 사망
 }
 
 public class StageManager : SingletonMonoBehavior<StageManager>
@@ -54,6 +57,14 @@ public class StageManager : SingletonMonoBehavior<StageManager>
                 continue;
 
             yield return item.AutoPlay();
+
+            if (Player.Players.Where(x => x.status != StatusType.Die).Count() == 0)
+            {
+                //플레이어가 모두 죽었다
+                CenterNotifyUI.Instance.Show("유다이");
+                GameState = GameStateType.GameOver;
+                yield break;
+            }
         }
 
         ProcessNextTurn();

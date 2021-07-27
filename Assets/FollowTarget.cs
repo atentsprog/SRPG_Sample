@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FollowTarget : SingletonMonoBehavior<FollowTarget>
 {
-    Transform target;
+    public Transform target;
     public Vector3 offset = new Vector3(0, 0, -7);
     public void SetTarget(Transform target)
     {
@@ -12,21 +12,24 @@ public class FollowTarget : SingletonMonoBehavior<FollowTarget>
         if (target)
         {
             var pos = target.position;
-            pos.y = transform.position.y;
-            transform.position = pos;
+            // 기존 카메라 높이를 유지 해야지
+            // 카메라가 땅으로 가서 렌더링 안되는 버그를막는다
+            //pos.y = transform.position.y; 
+            transform.position = pos + offset;
         }
     }
 
-    void LateUpdate()
-    {
-        if (target == null)
-            return;
+    // 다른 컴포넌트에 Pan기능때문에 사용안함.
+    //void LateUpdate()
+    //{
+    //    if (target == null)
+    //        return;
 
-        var newPos = target.position + offset;
+    //    var newPos = target.position + offset;
 
-        newPos.x = transform.position.x;
-        newPos.y = transform.position.y;
+    //    newPos.x = transform.position.x;
+    //    newPos.y = transform.position.y;
 
-        transform.position = newPos;
-    }
+    //    transform.position = newPos;
+    //}
 }

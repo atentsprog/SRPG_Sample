@@ -33,7 +33,11 @@ public class Monster : Actor
             // Player쪽으로 이동하자.
             yield return FindPathCo(enemyPlayer.transform.position.ToVector2Int());
             // 공격 할 수 있으면 공격하자.
-            yield return AttackToTargetCo(enemyPlayer);
+
+            if (IsInAttackableArea(enemyPlayer.transform.position))
+            {
+                yield return AttackToTargetCo(enemyPlayer);
+            }
         }
     }
 
@@ -50,23 +54,11 @@ public class Monster : Actor
 
 
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
-    Animator animator;
+
     protected void Start()
     {
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster, this);
         animator = GetComponentInChildren<Animator>();
-    }
-
-    internal override void TakeHit(int power)
-    {
-        //맞은 데미지 표시하자.
-        GameObject damageTextGo = (GameObject)Instantiate(Resources.Load("DamageText"), transform);
-        damageTextGo.transform.localPosition = new Vector3(0, 1.3f, 0);
-        damageTextGo.GetComponent<TextMeshPro>().text = power.ToString();
-        Destroy(damageTextGo, 2);
-
-        hp -= power;
-        animator.Play("TakeHit");
     }
 
     public override BlockType GetBlockType()

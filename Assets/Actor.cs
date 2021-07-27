@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum StatusType
@@ -51,7 +52,7 @@ public class Actor : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         // 앞쪽에 있는 공격 포인트들.
         foreach (var item in attackPoints)
-            attackableLocalPositions.Add(item.transform.localPosition.ToVector2Int());
+            attackableLocalPositions.Add((item.transform.position - transform.position).ToVector2Int());
 
         // 오른쪽에 있는 공격 포인트들.
         transform.Rotate(0, 90, 0);
@@ -72,12 +73,23 @@ public class Actor : MonoBehaviour
         transform.Rotate(0, 90, 0);
     }
 
-    internal virtual void TakeHit(int power)
+
+    internal void TakeHit(int power)
     {
         //맞은 데미지 표시하자.
-        hp -= power;
-    }
+        GameObject damageTextGoInResoruce = (GameObject)Resources.Load("DamageText");
+        var pos = transform.position;
+        pos.y = 1.3f;
+        GameObject damageTextGo = Instantiate(damageTextGoInResoruce
+            , pos
+            , damageTextGoInResoruce.transform.rotation, transform);
 
+        damageTextGo.GetComponent<TextMeshPro>().text = power.ToString();
+        Destroy(damageTextGo, 2);
+
+        hp -= power;
+        animator.Play("TakeHit");
+    }
 
     /// <summary>
     /// 타겟 위치가 공격 가능한 지역인지 확인.

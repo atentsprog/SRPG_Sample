@@ -19,7 +19,7 @@ public class Player : Actor
         Players.Remove(this);
     }
 
-    public override ActorTypeEnum ActorType { get => ActorTypeEnum.Plyer; }
+    public override ActorTypeEnum ActorType { get => ActorTypeEnum.Player; }
 
     static public Player SelectedPlayer;
 

@@ -15,7 +15,7 @@ public enum StatusType
 public enum ActorTypeEnum
 {
     NotInit, // 
-    Plyer,
+    Player,
     Monster,
 }
 public class Actor : MonoBehaviour

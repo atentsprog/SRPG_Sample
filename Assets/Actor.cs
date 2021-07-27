@@ -118,6 +118,11 @@ public class Actor : MonoBehaviour
             PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(myTr);
             path.RemoveAt(0); // 자기 위치 지우기.
+
+            // 몬스터일 때는 마지막 지점을 삭제해야한다.
+            if( ActorType == ActorTypeEnum.Monster)
+                path.RemoveAt(path.Count - 1);
+
             //path[0]; // 1회째 움직일곳
             //path[1]; // 2회째 움직일곳
             //path[2]; // 3회째 움직일곳
@@ -147,7 +152,7 @@ public class Actor : MonoBehaviour
     }
     public virtual BlockType GetBlockType()
     {
-        Debug.LogError("자식에서 GetBlockType함수 오버라이드 해야함");
+        Debug.LogError($"{GetType()}, 자식에서 GetBlockType함수 오버라이드 해야함");
         return BlockType.None;
     }
     protected virtual  void OnCompleteMove()

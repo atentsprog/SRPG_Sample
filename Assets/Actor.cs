@@ -79,8 +79,10 @@ public class Actor : MonoBehaviour
     internal virtual IEnumerator TakeHitCo(int power)
     {
         //맞은 데미지 표시하자.
-        GameObject damageTextGo = (GameObject)Instantiate(Resources.Load("DamageText"), transform);
+        GameObject damageTextResourceGo = (GameObject)Resources.Load("DamageText");
+        GameObject damageTextGo = Instantiate(damageTextResourceGo, transform);
         damageTextGo.transform.localPosition = new Vector3(0, 1.3f, 0);
+        damageTextGo.transform.rotation = damageTextResourceGo.transform.rotation;
         damageTextGo.GetComponent<TextMeshPro>().text = power.ToString();
         Destroy(damageTextGo, 2);
 

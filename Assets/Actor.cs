@@ -49,7 +49,7 @@ public class Actor : MonoBehaviour
 
         // 앞쪽에 있는 공격 포인트들.
         foreach (var item in attackPoints)
-            attackablePoints.Add(item.transform.localPosition.ToVector2Int());
+            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
 
         // 오른쪽에 있는 공격 포인트들.
         transform.Rotate(0, 90, 0);

@@ -74,10 +74,11 @@ public static class PathFinding2D
             if (map.ContainsKey(item))
             {
                 BlockType groundBlockType = map[item].blockType;
-                groundBlockType &= ~BlockType.Player;
-                groundBlockType &= ~BlockType.Monster;
 
-                if(passableValues.HasFlag(groundBlockType))
+                groundBlockType &= ~BlockType.Player;
+                //groundBlockType &= ~BlockType.Monster;
+
+                if (passableValues.HasFlag(groundBlockType))
                     findTemp(openList, currentNode, item, to, getDistance);
             }
         }

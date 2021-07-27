@@ -22,7 +22,7 @@ public class Actor : MonoBehaviour
 {
     public virtual ActorTypeEnum ActorType { get => ActorTypeEnum.NotInit; }
 
-    public string nickname = "이름 이력해주세요";
+    public string nickname = "이름을 입력해주세요";
     public string iconName;
     public int power = 10;
     public float hp = 20;

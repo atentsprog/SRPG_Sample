@@ -116,6 +116,17 @@ public class Player : Actor
         transform.LookAt(attackTarget.transform);
 
         animator.Play("Attack");
+        //attackTarget위치에 나의 AttackPoint를 확인해서 AttackArea가 있다면 추가 범위공격을 하자.
+        var attackAreas = GetAttackableAreas(attackTarget.transform.position);
+        foreach (var item in attackAreas)
+        {
+            var itemPoint = item.transform.position.ToVector2Int();
+            GroundManager.Instance.blockInfoMap.TryGetValue(itemPoint, out BlockInfo block);
+            var newAttackTarget = block.actor;
+            if(newAttackTarget)
+                StartCoroutine(newAttackTarget.TakeHitCo((int)(power * item.damageRatio)));
+        }
+
         yield return attackTarget.TakeHitCo(power);
         yield return new WaitForSeconds(attackTime);
 
@@ -123,6 +134,14 @@ public class Player : Actor
         
         if(StageManager.IsGameOver == false)
             StageManager.GameState = GameStateType.SelectPlayer;
+    }
+
+    private List<AttackArea> GetAttackableAreas(Vector3 position)
+    {
+        var intPos = position.ToVector2Int();
+        var myPos = transform.position.ToVector2Int();
+        Vector2Int localPos = intPos - myPos;
+        return attackablePoints[localPos].GetAttackableAreas();
     }
 
     internal bool OnMoveable(Vector3 position, int maxDistance)
@@ -158,7 +177,7 @@ public class Player : Actor
         var map = GroundManager.Instance.blockInfoMap;
 
         //공격가능한 지역에 적이 있는지 확인하자.
-        foreach (var item in attackablePoints)
+        foreach (var item in attackablePoints.Keys)
         {
             Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
 

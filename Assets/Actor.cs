@@ -38,7 +38,7 @@ public class Actor : MonoBehaviour
     public bool CompleteTurn { get => completeMove && completeAct; }
 
     // 공격 범위를 모아두자.
-    public List<Vector2Int> attackablePoints = new List<Vector2Int>();
+    public Dictionary<Vector2Int, AttackPoint> attackablePoints = new Dictionary<Vector2Int, AttackPoint>();
     protected Animator animator;
     public float moveTimePerUnit = 0.3f;
     public BlockType passableValues = BlockType.Walkable | BlockType.Water;
@@ -49,22 +49,22 @@ public class Actor : MonoBehaviour
 
         // 앞쪽에 있는 공격 포인트들.
         foreach (var item in attackPoints)
-            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
+            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int(), item);
 
         // 오른쪽에 있는 공격 포인트들.
         transform.Rotate(0, 90, 0);
         foreach (var item in attackPoints)
-            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
+            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int(), item);
 
         // 뒤쪽에 있는 공격 포인트들.
         transform.Rotate(0, 90, 0);
         foreach (var item in attackPoints)
-            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
+            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int(), item);
 
         // 왼쪽에 있는 공격 포인트들.
         transform.Rotate(0, 90, 0);
         foreach (var item in attackPoints)
-            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int());
+            attackablePoints.Add((item.transform.position - transform.position).ToVector2Int(), item);
 
         // 다시 앞쪽 보도록 돌림.
         transform.Rotate(0, 90, 0);
@@ -129,7 +129,7 @@ public class Actor : MonoBehaviour
         Vector2Int currentPos = transform.position.ToVector2Int();
         Vector2Int chekcPoint = position.ToVector2Int(); 
 
-        foreach (var item in attackablePoints)
+        foreach (var item in attackablePoints.Keys)
         {
             Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
             if (pos == chekcPoint)

@@ -48,7 +48,7 @@ public class Actor : MonoBehaviour
     protected void Awake()
     {
         var attackPoints = GetComponentsInChildren<AttackPoint>(true);
-
+        animator = GetComponentInChildren<Animator>();
         // 앞쪽에 있는 공격 포인트들.
         foreach (var item in attackPoints)
             attackableLocalPositions.Add(item.transform.localPosition.ToVector2Int());
@@ -117,7 +117,19 @@ public class Actor : MonoBehaviour
             GroundManager.Instance.RemoveBlockInfo(myPosVector3, GetBlockType());
             PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(myTr);
-            path.RemoveAt(0);
+            path.RemoveAt(0); // 자기 위치 지우기.
+            //path[0]; // 1회째 움직일곳
+            //path[1]; // 2회째 움직일곳
+            //path[2]; // 3회째 움직일곳
+            //path[3]// <- 4회째 이동, 이거부터 끝까지 제거 하자.
+            // 최대 이동거리만큼 이동하자.
+            if (path.Count > moveDistance) //3
+                path.RemoveRange(moveDistance, path.Count - moveDistance);
+
+            ////moveDistance:3
+            ////path.Count : 5
+
+
             foreach (var item in path)
             {
                 Vector3 playerNewPos = new Vector3(item.x, myPosVector3.y, item.y);

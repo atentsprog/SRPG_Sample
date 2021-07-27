@@ -24,7 +24,7 @@ public class Player : Actor
     void Start()
     {
         //SelectedPlayer = this;
-        animator = GetComponentInChildren<Animator>();
+        //animator = GetComponentInChildren<Animator>();
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
         FollowTarget.Instance.SetTarget(transform);
     }

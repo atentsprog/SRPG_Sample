@@ -189,7 +189,7 @@ public class BlockInfo : MonoBehaviour
 
     string debugTextPrefab = "DebugTextPrefab";
     GameObject debugTextGos;
-    internal Actor actor;
+    public Actor actor;
 
     internal void UpdateDebugInfo()
     {

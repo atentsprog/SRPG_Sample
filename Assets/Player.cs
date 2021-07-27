@@ -6,6 +6,17 @@ using UnityEngine;
 
 public class Player : Actor
 {
+    public static List<Player> Players = new List<Player>();
+    new protected void Awake()
+    {
+        base.Awake();
+        Players.Add(this);
+    }
+    protected void OnDestroy()
+    {
+        Players.Remove(this);
+    }
+
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Plyer; }
 
     static public Player SelectedPlayer;
@@ -87,30 +98,6 @@ public class Player : Actor
             return false;
 
         return true;
-    }
-
-
-    /// <summary>
-    /// 타겟 위치가 공격 가능한 지역인지 확인.
-    /// </summary>
-    /// <param name="enemyPosition">체크할 지역</param>
-    /// <returns>공격 가능하면 true</returns>
-    private bool IsInAttackableArea(Vector3 enemyPosition)
-    {
-        Vector2Int enmyPositionVector2 = enemyPosition.ToVector2Int();
-        Vector2Int currentPos = transform.position.ToVector2Int();
-
-        //공격가능한 지역에 적이 있는지 확인하자.
-        foreach (var item in attackableLocalPositions)
-        {
-            // pos : 공격 가능한 월드 포지션
-            Vector2Int pos = item + currentPos; //item의 월드 지역 위치;
-
-            if (pos == enmyPositionVector2)
-                return true;
-        }
-
-        return false;
     }
 
     internal void AttackToTarget(Actor actor)

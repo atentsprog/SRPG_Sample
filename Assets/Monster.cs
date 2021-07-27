@@ -78,8 +78,11 @@ public class Monster : Actor
         Transform myTr = transform;
         Vector2Int myPos = myTr.position.ToVector2Int();
 
+
+        // 몬스터가 있는곳에는 이동시키자 말자.
+
         var map = GroundManager.Instance.blockInfoMap;
-        List<Vector2Int> path = PathFinding2D.find4(myPos, destPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
+        List<Vector2Int> path = PathFinding2D.find4(myPos, destPos, map, passableValues);
         if (path.Count == 0)
             Debug.Log("길이 없다");
         else
@@ -88,8 +91,16 @@ public class Monster : Actor
             GroundManager.Instance.RemoveBlockInfo(myTr.position, BlockType.Monster);
             PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(myTr);
-            path.RemoveAt(0);
-            path.RemoveAt(path.Count - 1);
+            path.RemoveAt(0);   // 자기위치
+            path.RemoveAt(path.Count - 1);  // 플레이어 위치.
+
+            // 최대 이동거리만큼 이동하자.
+            if (path.Count > moveDistance)
+                path.RemoveRange(moveDistance, path.Count - moveDistance);
+            //예) 이동가능거리가 2인데 패스가 3개라면
+            // 3 > 2
+            // (2, 1)
+
             foreach (var item in path)
             {
                 Vector3 playerNewPos = new Vector3(item.x, 0, item.y);

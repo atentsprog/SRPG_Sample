@@ -8,23 +8,34 @@ using UnityEngine;
 
 public class Monster : Actor
 {
-    public static List<Monster> Monters = new List<Monster>();
+    public static List<Monster> Monsters = new List<Monster>();
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
 
     new protected void Awake()
     {
         base.Awake();
-        Monters.Add(this);
+        Monsters.Add(this);
     }
     new protected void OnDestroy()
     {
         base.OnDestroy();
-        Monters.Remove(this);
+        Monsters.Remove(this);
     }
     void Start()
     {
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Monster, this);
         animator = GetComponentInChildren<Animator>();
+    }
+
+    protected override void OnDie()
+    {
+        print("몬스터가 죽었다. 게임 끝났는지 확인하자.");
+        if (Monsters.Where(x => x.status != StatusType.Die).Count() == 0)
+        {
+            //플레이어가 모두 죽었다
+            CenterNotifyUI.Instance.Show("당신의 승리");
+            StageManager.GameState = GameStateType.StageClear;
+        }
     }
 
     //internal override void TakeHit(int power)

@@ -15,15 +15,26 @@ public enum GameStateType
     MonsterTurn,
 
     GameOver,   // 모든 플레이어 사망
+    StageClear  // 모든 몬스터 사망, 스테이지 클리어.
 }
 
 public class StageManager : SingletonMonoBehavior<StageManager>
 {
+    public static bool IsGameOver
+    {
+        get => Instance.gameState == GameStateType.GameOver
+                || Instance.gameState == GameStateType.StageClear;
+    }
+
     [SerializeField] GameStateType gameState;
     static public GameStateType GameState
     {
         get => Instance.gameState;
         set {
+            if (IsGameOver)
+            {
+                Debug.LogWarning("게임이 종료 되었는데 상태를 바꾸려 합니다");
+            }
             Debug.Log($"{Instance.gameState} => {value}");
 
             NotifyUI.Instance.Show(value.ToString(), 10);
@@ -41,7 +52,16 @@ public class StageManager : SingletonMonoBehavior<StageManager>
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse1))
-            ContextMenuUI.Instance.Show(Input.mousePosition);
+        {
+            if (GameState == GameStateType.SelectedPlayerMoveOrAct)
+            {
+                CancelSelection();
+            }
+            else
+            {
+                ContextMenuUI.Instance.Show(Input.mousePosition);
+            }
+        }
     }
 
     public void StartMonsterTurn()
@@ -51,20 +71,15 @@ public class StageManager : SingletonMonoBehavior<StageManager>
 
     private IEnumerator MonsterTurnCo()
     {
-        foreach (var item in Monster.Monters)
+        foreach (var item in Monster.Monsters)
         {
             if (item.status == StatusType.Die)
                 continue;
 
             yield return item.AutoPlay();
 
-            if (Player.Players.Where(x => x.status != StatusType.Die).Count() == 0)
-            {
-                //플레이어가 모두 죽었다
-                CenterNotifyUI.Instance.Show("유다이");
-                GameState = GameStateType.GameOver;
+            if (IsGameOver)
                 yield break;
-            }
         }
 
         ProcessNextTurn();
@@ -81,6 +96,11 @@ public class StageManager : SingletonMonoBehavior<StageManager>
 
         ShowNextTurn();
 
+        GameState = GameStateType.SelectPlayer;
+    }
+    void CancelSelection()
+    {
+        Player.ClearSelectedPlayer();
         GameState = GameStateType.SelectPlayer;
     }
     private void ClearActorFlag()

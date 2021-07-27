@@ -92,7 +92,13 @@ public class Actor : MonoBehaviour
             yield return new WaitForSeconds(takeHitTime);
             animator.Play("Die");
             status = StatusType.Die;
+            OnDie();
         }
+    }
+
+    protected virtual void OnDie()
+    {
+        print("몬스터와 플레이어가 죽었을때 실행될 로직을 각자 정의하게 하자");
     }
 
     public void PlayAnimation(string nodeName)

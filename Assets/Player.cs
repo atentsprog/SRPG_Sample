@@ -1,6 +1,8 @@
 ﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : Actor
@@ -79,6 +81,12 @@ public class Player : Actor
         }
     }
 
+    internal static void ClearSelectedPlayer()
+    {
+        SelectedPlayer = null;
+        BlockInfo.ClearMoveableArea();
+    }
+
     internal bool CanAttackTarget(Actor actor)
     {
         //같은팀을 공격대상으로 하지 않기
@@ -112,7 +120,9 @@ public class Player : Actor
         yield return new WaitForSeconds(attackTime);
 
         completeAct = true;
-        StageManager.GameState = GameStateType.SelectPlayer;
+        
+        if(StageManager.IsGameOver == false)
+            StageManager.GameState = GameStateType.SelectPlayer;
     }
 
     internal bool OnMoveable(Vector3 position, int maxDistance)
@@ -181,5 +191,14 @@ public class Player : Actor
 
     public Ease moveEase = Ease.InBounce;
 
+    protected override void OnDie()
+    {
+        if (Players.Where(x => x.status != StatusType.Die).Count() == 0)
+        {
+            //플레이어가 모두 죽었다
+            CenterNotifyUI.Instance.Show("유다이");
+            StageManager.GameState = GameStateType.GameOver;
+        }
+    }
 
 }

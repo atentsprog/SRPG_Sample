@@ -39,8 +39,7 @@ public class ContextMenuUI : BaseUI<ContextMenuUI>
 
         // 파란색 선택 영역 초기화
         // 선택된 플레이어 해제.
-        Player.SelectedPlayer = null;
-        BlockInfo.ClearMoveableArea();
+        Player.ClearSelectedPlayer();
 
         StageManager.Instance.StartMonsterTurn();
 

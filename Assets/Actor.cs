@@ -118,9 +118,9 @@ public class Actor : MonoBehaviour
             PlayAnimation("Walk");
             FollowTarget.Instance.SetTarget(myTr);
             path.RemoveAt(0); // 자기 위치 지우기.
-
+            
             // 몬스터일 때는 마지막 지점을 삭제해야한다.
-            if( ActorType == ActorTypeEnum.Monster)
+            if ( ActorType == ActorTypeEnum.Monster)
                 path.RemoveAt(path.Count - 1);
 
             //path[0]; // 1회째 움직일곳
@@ -145,7 +145,7 @@ public class Actor : MonoBehaviour
             PlayAnimation("Idle");
             FollowTarget.Instance.SetTarget(null);
             // 이동한 위치에는 플레이어 정보 추가
-            GroundManager.Instance.AddBlockInfo(myPosVector3, GetBlockType(), this);
+            GroundManager.Instance.AddBlockInfo(myTr.position, GetBlockType(), this);
             completeMove = true;
             OnCompleteMove();
         }

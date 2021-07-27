@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +9,12 @@ public class FollowTarget : SingletonMonoBehavior<FollowTarget>
     public void SetTarget(Transform target)
     {
         this.target = target;
+        if (target)
+        {
+            var pos = target.position;
+            pos.y = transform.position.y;
+            transform.position = pos;
+        }
     }
 
     void LateUpdate()
@@ -17,7 +23,10 @@ public class FollowTarget : SingletonMonoBehavior<FollowTarget>
             return;
 
         var newPos = target.position + offset;
+
+        newPos.x = transform.position.x;
         newPos.y = transform.position.y;
+
         transform.position = newPos;
     }
 }

@@ -56,7 +56,7 @@ public class Monster : Actor
         // 공격범위안에 적이 있는지 확인.
         // 있다면 바로 공격 없다면 가장 가까운 플레이어 방향으로 이동.
 
-        Player nearestPlayer = FindNearestPlayer();
+        Player nearestPlayer = FindMoveableNearestPlayer();
         if (IsAttackablePosition(nearestPlayer.transform.position))
         {
             yield return AttackToTargetCo(nearestPlayer);
@@ -130,13 +130,27 @@ public class Monster : Actor
         completeAct = true;
     }
 
-    private Player FindNearestPlayer()
+
+    private Player FindMoveableNearestPlayer()
     {
         var myPos = transform.position;
+        var myPos2Int = transform.position.ToVector2Int();
+
+        var result = PathFinding2D.find4(myPos2Int, new Vector2Int(0, 6), GroundManager.Instance.blockInfoMap, passableValues);
+
         var nearestPlayer = Player.Players
-            .Where( x => x.status != StatusType.Die)
+            .Where(x => x.status != StatusType.Die && PathFinding2D.find4(myPos2Int, x.transform.position.ToVector2Int(), GroundManager.Instance.blockInfoMap, passableValues).Count > 0)
             .OrderBy(x => Vector3.Distance(myPos, x.transform.position))
             .First();
         return nearestPlayer;
     }
+    //private Player FindNearestPlayer()
+    //{
+    //    var myPos = transform.position;
+    //    var nearestPlayer = Player.Players
+    //        .Where(x => x.status != StatusType.Die)
+    //        .OrderBy(x => Vector3.Distance(myPos, x.transform.position))
+    //        .First();
+    //    return nearestPlayer;
+    //}
 }

@@ -20,18 +20,13 @@ public class Player : Actor
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Plyer; }
 
     static public Player SelectedPlayer;
-    Animator animator;
+
     void Start()
     {
         //SelectedPlayer = this;
         animator = GetComponentInChildren<Animator>();
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
         FollowTarget.Instance.SetTarget(transform);
-    }
-
-    public void PlayAnimation(string nodeName)
-    {
-        animator.Play(nodeName, 0, 0);
     }
 
     internal void MoveToPosition(Vector3 position)
@@ -44,47 +39,6 @@ public class Player : Actor
     {
         StopAllCoroutines();
         StartCoroutine(FindPathCo(goalPos));
-    }
-    public BlockType passableValues = BlockType.Walkable | BlockType.Water;
-    IEnumerator FindPathCo(Vector2Int goalPos)
-    {
-        Transform player = transform;
-        Vector2Int playerPos = new Vector2Int(Mathf.RoundToInt(player.position.x)
-            , Mathf.RoundToInt(player.position.z));
-        playerPos.x = Mathf.RoundToInt(player.position.x);
-        playerPos.y = Mathf.RoundToInt(player.position.z);
-        var map = GroundManager.Instance.blockInfoMap;
-        List<Vector2Int> path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
-        if (path.Count == 0)
-            Debug.Log("길이 없다");
-        else
-        {
-            // 월래 위치에선 플레이어 정보 삭제
-            GroundManager.Instance.RemoveBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player);
-            Player.SelectedPlayer.PlayAnimation("Walk");
-            FollowTarget.Instance.SetTarget(Player.SelectedPlayer.transform);
-            path.RemoveAt(0);
-            foreach (var item in path)
-            {
-                Vector3 playerNewPos = new Vector3(item.x, 0, item.y);
-                player.LookAt(playerNewPos);
-                //player.position = playerNewPos;
-                player.DOMove(playerNewPos, moveTimePerUnit).SetEase(moveEase);
-                yield return new WaitForSeconds(moveTimePerUnit);
-            }
-            Player.SelectedPlayer.PlayAnimation("Idle");
-            FollowTarget.Instance.SetTarget(null);
-            // 이동한 위치에는 플레이어 정보 추가
-            GroundManager.Instance.AddBlockInfo(Player.SelectedPlayer.transform.position, BlockType.Player, this);
-
-            bool existAttackTarget = ShowAttackableArea();
-            if (existAttackTarget)
-                StageManager.GameState = GameStateType.SelectToAttackTarget;
-            else
-                StageManager.GameState = GameStateType.SelectPlayer;
-
-            completeMove = true;
-        }
     }
 
     internal bool CanAttackTarget(Actor enemy)
@@ -145,6 +99,15 @@ public class Player : Actor
         enemyExistPoint.ForEach( x => x.ToChangeOriginalColor());
         enemyExistPoint.Clear();
     }
+    protected override void OnCompleteMove()
+    {
+        bool existAttackTarget = ShowAttackableArea();
+        if (existAttackTarget)
+            StageManager.GameState = GameStateType.SelectToAttackTarget;
+        else
+            StageManager.GameState = GameStateType.SelectPlayer;
+    }
+
     public List<BlockInfo> enemyExistPoint = new List<BlockInfo>();
     internal bool ShowAttackableArea()
     {
@@ -184,6 +147,8 @@ public class Player : Actor
         return true;
     }
 
-    public Ease moveEase = Ease.InBounce;
-    public float moveTimePerUnit = 0.3f;
+    public override BlockType GetBlockType()
+    {
+        return BlockType.Player;
+    }
 }

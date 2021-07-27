@@ -31,7 +31,7 @@ public class Monster : Actor
         else
         {
             // Player쪽으로 이동하자.
-            yield return MoveToPositionCo(enemyPlayer.transform.position);
+            yield return FindPathCo(enemyPlayer.transform.position.ToVector2Int());
             // 공격 할 수 있으면 공격하자.
             yield return AttackToTargetCo(enemyPlayer);
         }
@@ -67,5 +67,10 @@ public class Monster : Actor
 
         hp -= power;
         animator.Play("TakeHit");
+    }
+
+    public override BlockType GetBlockType()
+    {
+        return BlockType.Monster;
     }
 }

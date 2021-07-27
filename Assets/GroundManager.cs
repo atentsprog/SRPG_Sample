@@ -1,4 +1,4 @@
-using DG.Tweening;
+ï»¿using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ static public class GroundExtention
         return new Vector2Int( Mathf.RoundToInt(v3.x)
             , Mathf.RoundToInt(v3.z));
     }
-    static public Vector3 ToVector2Int(this Vector2Int v2Int, float y)
+    static public Vector3 ToVector3(this Vector2Int v2Int, float y)
     {
         return new Vector3(v2Int.x, y, v2Int.y);
     }
@@ -24,8 +24,8 @@ static public class GroundExtention
 
 public class GroundManager : SingletonMonoBehavior<GroundManager>
 {
-    public Vector2Int playerPos; // ¿©±â¼­ ºÎÅÍ ½ÃÀÛ
-    //public Dictionary<Vector2Int, BlockType> blockInfoMap = new Dictionary<Vector2Int, BlockType>(); // A*¿¡¼­ »ç¿ë
+    public Vector2Int playerPos; // ì—¬ê¸°ì„œ ë¶€í„° ì‹œì‘
+    //public Dictionary<Vector2Int, BlockType> blockInfoMap = new Dictionary<Vector2Int, BlockType>(); // A*ì—ì„œ ì‚¬ìš©
     public Dictionary<Vector2Int, BlockInfo> blockInfoMap = new Dictionary<Vector2Int, BlockInfo>();
     public BlockType passableValues = BlockType.Walkable | BlockType.Water;
     public Transform player;
@@ -36,16 +36,16 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
     {
         base.Awake();
 
-        // ÀÚ½ÄÀÇ ¸ğµç BlockInfo Ã£ÀÚ.
+        // ìì‹ì˜ ëª¨ë“  BlockInfo ì°¾ì.
         var blockInfos = GetComponentsInChildren<BlockInfo>();
-        // ¸ÊÀ» Ã¤¿ö ³ÖÀÚ.
+        // ë§µì„ ì±„ì›Œ ë„£ì.
 
-        debugTextGos.ForEach(x => Destroy(x));  // ºí·°¿¡ ±âÁ¸¿¡ ÀÖ´ø µğ¹ö±×¿ë ÅØ½ºÆ® »èÁ¦
+        debugTextGos.ForEach(x => Destroy(x));  // ë¸”ëŸ­ì— ê¸°ì¡´ì— ìˆë˜ ë””ë²„ê·¸ìš© í…ìŠ¤íŠ¸ ì‚­ì œ
         debugTextGos.Clear();
         foreach (var item in blockInfos)
         {
             var pos = item.transform.position;
-            //Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z); <-- ¿¡·¯ ÄÚµå
+            //Vector2Int intPos = new Vector2Int((int)pos.x, (int)pos.z); <-- ì—ëŸ¬ ì½”ë“œ
             Vector2Int intPos = pos.ToVector2Int();
             //blockInfoMap[intPos] = item.blockType;
 
@@ -66,11 +66,11 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         if (blockInfoMap.ContainsKey(pos) == false)
         {
-            Debug.LogError($"{pos} À§Ä¡¿¡ ¸ÊÀÌ ¾ø´Ù");
+            Debug.LogError($"{pos} ìœ„ì¹˜ì— ë§µì´ ì—†ë‹¤");
         }
 
-        //map[pos] = map[pos] | addBlockType;   // ±âÁ¸ °ª¿¡ Ãß°¡ÇÏ°Ú´Ù.
-        //blockInfoMap[pos] |= addBlockType;               // ±âÁ¸ °ª¿¡ Ãß°¡ÇÏ°Ú´Ù.
+        //map[pos] = map[pos] | addBlockType;   // ê¸°ì¡´ ê°’ì— ì¶”ê°€í•˜ê² ë‹¤.
+        //blockInfoMap[pos] |= addBlockType;               // ê¸°ì¡´ ê°’ì— ì¶”ê°€í•˜ê² ë‹¤.
         blockInfoMap[pos].blockType |= addBlockType;
         blockInfoMap[pos].actor = actor;
         if (useDebugMode)
@@ -81,10 +81,10 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         if (blockInfoMap.ContainsKey(pos) == false)
         {
-            Debug.LogError($"{pos} À§Ä¡¿¡ ¸ÊÀÌ ¾ø´Ù");
+            Debug.LogError($"{pos} ìœ„ì¹˜ì— ë§µì´ ì—†ë‹¤");
         }
 
-        //blockInfoMap[pos] &= ~removeBlockType;               // ±âÁ¸ °ª¿¡¼­ »èÁ¦ÇÏ°Ú´Ù.
+        //blockInfoMap[pos] &= ~removeBlockType;               // ê¸°ì¡´ ê°’ì—ì„œ ì‚­ì œí•˜ê² ë‹¤.
         blockInfoMap[pos].blockType &= ~removeBlockType;
         blockInfoMap[pos].actor = null;
         if (useDebugMode)

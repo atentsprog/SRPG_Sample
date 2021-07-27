@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,6 +37,12 @@ public class Actor : MonoBehaviour
 
     // 공격 범위를 모아두자.
     public List<Vector2Int> attackableLocalPositions = new List<Vector2Int>();
+
+    public float moveTimePerUnit = 0.3f;
+    protected Animator animator;
+    public BlockType passableValues = BlockType.Walkable | BlockType.Water;
+
+    
     protected void Awake()
     {
         var attackPoints = GetComponentsInChildren<AttackPoint>(true);
@@ -91,5 +98,52 @@ public class Actor : MonoBehaviour
         }
 
         return false;
+    }
+
+    protected IEnumerator FindPathCo(Vector2Int destPos) //AttackToTargetCo
+    {
+        Transform myTr = transform;
+        Vector2Int myPos = myTr.position.ToVector2Int();
+        Vector3 myPosVector3 = myTr.position;
+        var map = GroundManager.Instance.blockInfoMap;
+        List<Vector2Int> path = PathFinding2D.find4(myPos, destPos, map, passableValues);
+        if (path.Count == 0)
+            Debug.Log("길이 없다");
+        else
+        {
+            // 월래 위치에선 플레이어 정보 삭제
+            GroundManager.Instance.RemoveBlockInfo(myPosVector3, GetBlockType());
+            PlayAnimation("Walk");
+            FollowTarget.Instance.SetTarget(myTr);
+            path.RemoveAt(0);
+            foreach (var item in path)
+            {
+                Vector3 playerNewPos = new Vector3(item.x, myPosVector3.y, item.y);
+                myTr.LookAt(playerNewPos);
+                myTr.DOMove(playerNewPos, moveTimePerUnit);
+                yield return new WaitForSeconds(moveTimePerUnit);
+            }
+            PlayAnimation("Idle");
+            FollowTarget.Instance.SetTarget(null);
+            // 이동한 위치에는 플레이어 정보 추가
+            GroundManager.Instance.AddBlockInfo(myPosVector3, GetBlockType(), this);
+
+            completeMove = true;
+
+            OnCompleteMove();
+        }
+    }
+    public virtual BlockType GetBlockType()
+    {
+        Debug.LogError("자식에서 GetBlockType함수 오버라이드 해야함");
+        return BlockType.None;
+    }
+    protected virtual  void OnCompleteMove()
+    {
+    }
+
+    public void PlayAnimation(string nodeName)
+    {
+        animator.Play(nodeName, 0, 0);
     }
 }

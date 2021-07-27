@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +17,7 @@ public class FollowTarget : SingletonMonoBehavior<FollowTarget>
             return;
 
         var newPos = target.position + offset;
+        newPos.x = transform.position.x;
         newPos.y = transform.position.y;
         transform.position = newPos;
     }

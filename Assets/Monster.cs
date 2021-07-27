@@ -30,12 +30,18 @@ public class Monster : Actor
     protected override void OnDie()
     {
         print("몬스터가 죽었다. 게임 끝났는지 확인하자.");
+
+
         if (Monsters.Where(x => x.status != StatusType.Die).Count() == 0)
         {
             //플레이어가 모두 죽었다
             CenterNotifyUI.Instance.Show("당신의 승리");
             StageManager.GameState = GameStateType.StageClear;
         }
+
+        // 몬스터가 죽은 자리는 다른 actor가 이동할 수 있도록 게임오브젝트 파괴후 블럭 정보에서도 삭제
+        Destroy(gameObject, 2);
+        GroundManager.Instance.RemoveBlockInfo(transform.position, GetBlockType);
     }
 
     //internal override void TakeHit(int power)

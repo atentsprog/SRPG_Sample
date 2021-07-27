@@ -97,6 +97,22 @@ public class Actor : MonoBehaviour
             OnDie();
         }
     }
+    public BlockType GetBlockType
+    {
+        get
+        {
+            switch (ActorType)
+            {
+                case ActorTypeEnum.Plyer:
+                    return BlockType.Player;
+                case ActorTypeEnum.Monster:
+                    return BlockType.Monster;
+                default:
+                    Debug.Log($"{ActorType}을 정의해 주세요");
+                    return BlockType.None;
+            }
+        }
+    }
 
     protected virtual void OnDie()
     {

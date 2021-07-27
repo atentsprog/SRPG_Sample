@@ -42,6 +42,8 @@ public class Actor : MonoBehaviour
     protected Animator animator;
     public BlockType passableValues = BlockType.Walkable | BlockType.Water;
 
+    public float attackTime = 1;
+
     
     protected void Awake()
     {
@@ -127,9 +129,7 @@ public class Actor : MonoBehaviour
             FollowTarget.Instance.SetTarget(null);
             // 이동한 위치에는 플레이어 정보 추가
             GroundManager.Instance.AddBlockInfo(myPosVector3, GetBlockType(), this);
-
             completeMove = true;
-
             OnCompleteMove();
         }
     }
@@ -145,5 +145,16 @@ public class Actor : MonoBehaviour
     public void PlayAnimation(string nodeName)
     {
         animator.Play(nodeName, 0, 0);
+    }
+
+    protected IEnumerator AttackToTargetCo(Actor attackTarget)
+    {
+        transform.LookAt(attackTarget.transform);
+
+        animator.Play("Attack");
+        attackTarget.TakeHit(power);
+        yield return new WaitForSeconds(attackTime);
+
+        completeAct = true;
     }
 }

@@ -57,20 +57,12 @@ public class Player : Actor
     internal void AttackToTarget(Actor actor)
     {
         ClearEnemyExistPoint();
-
-        StartCoroutine(AttackToTargetCo(actor));
+        StartCoroutine(AttackToTargetCo_(actor));
     }
 
-    public float attackTime = 1;
-    private IEnumerator AttackToTargetCo(Actor attackTarget)
+    private IEnumerator AttackToTargetCo_(Actor actor)
     {
-        transform.LookAt(attackTarget.transform);
-
-        animator.Play("Attack");
-        attackTarget.TakeHit(power);
-        yield return new WaitForSeconds(attackTime);
-
-        completeAct = true;
+        yield return AttackToTargetCo(actor);
         StageManager.GameState = GameStateType.SelectPlayer;
     }
 

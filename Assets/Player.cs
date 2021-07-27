@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : Actor
@@ -12,8 +13,9 @@ public class Player : Actor
         base.Awake();
         Players.Add(this);
     }
-    protected void OnDestroy()
+    new protected void OnDestroy()
     {
+        base.OnDestroy();
         Players.Remove(this);
     }
 
@@ -54,15 +56,19 @@ public class Player : Actor
         return true;
     }
 
-    internal void AttackToTarget(Actor actor)
+    internal void AttackToTarget(Monster actor)
     {
         ClearEnemyExistPoint();
         StartCoroutine(AttackToTargetCo_(actor));
     }
 
-    private IEnumerator AttackToTargetCo_(Actor actor)
+    private IEnumerator AttackToTargetCo_(Monster monster)
     {
-        yield return AttackToTargetCo(actor);
+        yield return AttackToTargetCo(monster);
+        //if(monster.status == StatusType.Die)
+        //{
+        //    AddExp(monster.rewardExp);
+        //}
         StageManager.GameState = GameStateType.SelectPlayer;
     }
 
@@ -142,5 +148,14 @@ public class Player : Actor
     public override BlockType GetBlockType()
     {
         return BlockType.Player;
+    }
+    protected override void OnDie()
+    {
+        // 모든 플레이어가 죽었는지 파악해서 다 죽었다면 GameOver표시.
+        if (Players.Where(x => x.status != StatusType.Die).Count() == 0)
+        {
+            CenterNotifyUI.Instance.Show(@"유다이
+Game Over");
+        }
     }
 }

@@ -58,7 +58,7 @@ public class StageManager : SingletonMonoBehavior<StageManager>
     }
     int turn = 1;
     private void ProcessNextTurn()
-    {
+    { 
         //// 턴 정보 초기화 해주자.
         ClearTrunInfo();
       

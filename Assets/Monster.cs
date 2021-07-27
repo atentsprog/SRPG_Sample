@@ -13,8 +13,9 @@ public class Monster : Actor
         base.Awake();
         Monsters.Add(this);
     }
-    protected void OnDestroy()
+    new protected void OnDestroy()
     {
+        base.OnDestroy();
         Monsters.Remove(this);
     }
 
@@ -47,7 +48,7 @@ public class Monster : Actor
         var nearestPlayer = Player.Players
             .Where(x => x.status != StatusType.Die)
             .OrderBy(x => Vector3.Distance(x.transform.position, myPos))
-            .Single();
+            .First();
 
         return nearestPlayer;
     }
@@ -64,5 +65,17 @@ public class Monster : Actor
     public override BlockType GetBlockType()
     {
         return BlockType.Monster;
+    }
+    protected override void OnDie()
+    {
+        // 몬스터가 죽은경우,
+        // 경험치 죽인 플레이어한테 경험치 주기
+        // 몬스터 GameObject파괴.
+        // 모든 몬스터가 죽었는지 파악해서 다 죽었다면 스테이지 클리어 
+        Destroy(gameObject, 1);
+        if (Monsters.Where(x => x.status != StatusType.Die).Count() == 0)
+        {
+            CenterNotifyUI.Instance.Show("Stage Clear");
+        }
     }
 }

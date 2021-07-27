@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -73,8 +74,13 @@ public class Actor : MonoBehaviour
         transform.Rotate(0, 90, 0);
     }
 
+    protected void OnDestroy()
+    {
+        GroundManager.Instance.RemoveBlockInfo(transform.position, GetBlockType());
+    }
 
-    internal void TakeHit(int power)
+    public float takeHitTime = 0.7f;
+    internal IEnumerator TakeHitCo(int power)
     {
         //맞은 데미지 표시하자.
         GameObject damageTextGoInResoruce = (GameObject)Resources.Load("DamageText");
@@ -89,6 +95,20 @@ public class Actor : MonoBehaviour
 
         hp -= power;
         animator.Play("TakeHit");
+        yield return new WaitForSeconds(takeHitTime);
+
+        if (hp <= 0)
+        {
+            animator.Play("Die");
+            status = StatusType.Die;
+
+            OnDie();
+        }
+    }
+
+    protected virtual void OnDie()
+    {
+        Debug.LogError("자식들이 오버라이드 해서 구현해야함, 여기 호출되면 안됨");
     }
 
     /// <summary>
@@ -181,8 +201,9 @@ public class Actor : MonoBehaviour
         transform.LookAt(attackTarget.transform);
 
         animator.Play("Attack");
-        attackTarget.TakeHit(power);
+        StartCoroutine(attackTarget.TakeHitCo(power));
         yield return new WaitForSeconds(attackTime);
+
 
         completeAct = true;
     }

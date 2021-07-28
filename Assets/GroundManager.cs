@@ -60,20 +60,6 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
     public List<GameObject> debugTextGos = new List<GameObject>();
 
 
-    public void AddBlockInfo(Vector3 position, BlockType addBlockType, ItemData dropItem)
-    {
-        // 씬에 드랍 아이템을 보여주자.
-        var dropItemGo =(GameObject)Instantiate(Resources.Load("DropItem"));
-        var sprite = Resources.Load("Icon/" + dropItem.iconName, typeof(Sprite));
-        dropItemGo.GetComponentInChildren<SpriteRenderer>().sprite =(Sprite)sprite;
-        dropItemGo.transform.position = position;
-        Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-        blockInfoMap[pos].blockType |= addBlockType;
-        blockInfoMap[pos].dropItemID = dropItem.ID;
-        blockInfoMap[pos].dropItemGo = dropItemGo;
-        if (useDebugMode)
-            blockInfoMap[pos].UpdateDebugInfo();
-    }
 
     public void AddBlockInfo(Vector3 position, BlockType addBlockType, Actor actor)
     {

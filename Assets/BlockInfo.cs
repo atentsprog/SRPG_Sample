@@ -12,7 +12,6 @@ public enum BlockType
     Water       = 1 << 1,
     Player      = 1 << 2,
     Monster     = 1 << 3,
-    Item        = 1 << 4,
 }
 public class BlockInfo : MonoBehaviour
 {
@@ -222,9 +221,6 @@ public class BlockInfo : MonoBehaviour
     Renderer m_Renderer;
     private Color moveableColor = Color.blue;
     private Color m_OriginalColor;
-    public int dropItemID;
-    internal GameObject dropItemGo;
-
     private void Awake()
     {
         m_Renderer = GetComponentInChildren<Renderer>();

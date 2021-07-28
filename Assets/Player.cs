@@ -29,9 +29,6 @@ public class Player : Actor
 
     private void SetLevelData()
     {
-        if (GlobalData.Instance.playerDataMap.ContainsKey(level.Value)== false)
-            Debug.LogError($"{level}레벨 정보가 없습니다");
-
         var data = GlobalData.Instance.playerDataMap[level.Value];
         maxExp = data.maxExp;
         hp = maxHp = data.maxHp;
@@ -102,7 +99,7 @@ public class Player : Actor
             AddExp(monster.rewardExp);
 
             if (monster.dropItemGroup.ratio > Random.Range(0, 1f))
-                DropItem(monster.dropItemGroup.dropItemID, monster.transform.position);
+                DropItem(monster.dropItemGroup.dropItemID);
         }
         StageManager.GameState = GameStateType.SelectPlayer;
     }
@@ -112,7 +109,7 @@ public class Player : Actor
     {
         DropItem(1);
     }
-    private void DropItem(int dropGroupID, Vector3? position = null)
+    private void DropItem(int dropGroupID)
     {
         var dropGroup = GlobalData.Instance.dropItemGroupDataMap[dropGroupID];
         
@@ -122,7 +119,6 @@ public class Player : Actor
 
         var dropItem = GlobalData.Instance.itemDataMap[dropItemRaioInfo.dropItemID];
         print(dropItem.ToString());
-        GroundManager.Instance.AddBlockInfo(position.Value, BlockType.Item, dropItem);
     }
 
     public int maxExp;

@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class Monster : Actor
 {
+    public int rewardExp = 7;
     public static List<Monster> Monsters = new List<Monster>();
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Monster; }
 

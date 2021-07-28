@@ -7,6 +7,33 @@ using UnityEngine;
 
 public class Player : Actor
 {
+    public int playerID;
+    public SaveInt exp, level;
+    public SaveString testLabel;
+
+    public int maxExp;
+    public void AddExp(int _exp)
+    {
+        exp.Value += _exp;
+        if(maxExp <= this.exp.Value)
+        {
+            int remainExp = _exp - maxExp;
+            exp.Value = remainExp;
+
+            level.Value++;
+            maxExp = level.Value * 10;
+        }
+    }
+
+    void InitExpAndLevel()
+    { 
+        exp = new SaveInt("exp" + playerID);
+        level = new SaveInt("level" + playerID);
+        testLabel = new SaveString("test");
+
+        maxExp = level.Value * 10;
+    }
+
     public static List<Player> Players = new List<Player>();
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Plyer; }
 
@@ -16,6 +43,7 @@ public class Player : Actor
     {
         base.Awake();
         Players.Add(this);
+        InitExpAndLevel();
     }
     new protected void OnDestroy()
     {

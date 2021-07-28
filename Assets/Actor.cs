@@ -74,9 +74,17 @@ public class Actor : MonoBehaviour
         transform.Rotate(0, 90, 0);
     }
 
+    //protected void OnDestroy()
+    //{
+    //    if (GroundManager.ApplicationQuit) // <- 길더라도 이로직 권장
+    //        return;
+
+    //    GroundManager.Instance.RemoveBlockInfo(transform.position, GetBlockType());
+    //}
+
     protected void OnDestroy()
     {
-        GroundManager.Instance.RemoveBlockInfo(transform.position, GetBlockType());
+        GroundManager.Instance?.RemoveBlockInfo(transform.position, GetBlockType());
     }
 
     public float takeHitTime = 0.7f;
@@ -202,6 +210,36 @@ public class Actor : MonoBehaviour
 
         animator.Play("Attack");
         StartCoroutine(attackTarget.TakeHitCo(power));
+
+        // 스플레시 데미지 적용하자.
+        SubAttackArea[] subAttackAreas = transform.GetComponentsInChildren<SubAttackArea>(true);
+        ActorTypeEnum myActorType = ActorType;
+        foreach(var item in subAttackAreas)
+        {
+            var pos = item.transform.position.ToVector2Int();
+            if(GroundManager.Instance.blockInfoMap.TryGetValue(pos, out BlockInfo block))
+            {
+                if (block.actor == null)
+                    continue;
+
+                Actor subAttackTarget = block.actor;
+                
+                switch (item.target)
+                {
+                    case SubAttackArea.Target.EnemyOnly:
+                        if (subAttackTarget.ActorType == myActorType)
+                            continue;
+                        break;
+                    case SubAttackArea.Target.AllyOnly:
+                        if (subAttackTarget.ActorType != myActorType)
+                            continue;
+                        break;
+                }
+                int subAttackPower = (int)(power * item.damageRatio);
+                StartCoroutine(subAttackTarget.TakeHitCo(subAttackPower));
+            }
+        }
+
         yield return new WaitForSeconds(attackTime);
 
 

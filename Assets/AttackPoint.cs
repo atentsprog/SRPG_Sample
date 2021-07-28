@@ -9,7 +9,7 @@ public class AttackPoint : MonoBehaviour
     void Start()
     {
         attackAreas.Clear();
-        attackAreas.AddRange(GetComponentsInChildren<AttackArea>());
+        attackAreas.AddRange(GetComponentsInChildren<AttackArea>(true));
         //Destroy(gameObject);
         gameObject.SetActive(false);
     }

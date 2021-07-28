@@ -118,22 +118,41 @@ public class Player : Actor
         animator.Play("Attack");
         //attackTarget위치에 나의 AttackPoint를 확인해서 AttackArea가 있다면 추가 범위공격을 하자.
         var attackAreas = GetAttackableAreas(attackTarget.transform.position);
-        foreach (var item in attackAreas)
-        {
-            var itemPoint = item.transform.position.ToVector2Int();
-            GroundManager.Instance.blockInfoMap.TryGetValue(itemPoint, out BlockInfo block);
-            var newAttackTarget = block.actor;
-            if(newAttackTarget)
-                StartCoroutine(newAttackTarget.TakeHitCo((int)(power * item.damageRatio)));
-        }
+        ExecuteSubAttackArea(attackAreas);
 
         yield return attackTarget.TakeHitCo(power);
         yield return new WaitForSeconds(attackTime);
 
         completeAct = true;
-        
-        if(StageManager.IsGameOver == false)
+
+        if (StageManager.IsGameOver == false)
             StageManager.GameState = GameStateType.SelectPlayer;
+    }
+
+    private void ExecuteSubAttackArea(List<AttackArea> attackAreas)
+    {
+        foreach (var item in attackAreas)
+        {
+            var itemPoint = item.transform.position.ToVector2Int();
+            GroundManager.Instance.blockInfoMap.TryGetValue(itemPoint, out BlockInfo block);
+            var newAttackTarget = block.actor;
+            if (newAttackTarget)
+            {
+                switch (item.target)
+                {
+                    case AttackArea.Target.EnemyOnly:
+                        if (newAttackTarget.ActorType == ActorType)
+                            continue;
+                        break;
+                    case AttackArea.Target.AllyOnly:
+                        if (newAttackTarget.ActorType != ActorType)
+                            continue;
+                        break;
+                }
+
+                StartCoroutine(newAttackTarget.TakeHitCo((int)(power * item.damageRatio)));
+            }
+        }
     }
 
     private List<AttackArea> GetAttackableAreas(Vector3 position)

@@ -8,11 +8,26 @@ using UnityEngine;
 public class Player : Actor
 {
     public static List<Player> Players = new List<Player>();
+    public int ID;
+    public SaveInt exp, level;
+
     new protected void Awake()
     {
         base.Awake();
         Players.Add(this);
+
     }
+
+    private void InitLevelData()
+    {
+        exp = new SaveInt("exp" + ID);
+        level = new SaveInt("level" + ID, 1);
+        var data = GlobalData.Instance.playerDataMap[level.Value];
+        maxExp = data.maxExp;
+        hp = data.hp;
+        mp = data.mp;
+    }
+
     new protected void OnDestroy()
     {
         base.OnDestroy();
@@ -29,6 +44,7 @@ public class Player : Actor
         //animator = GetComponentInChildren<Animator>();
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
 
+        InitLevelData();
     }
 
     internal void MoveToPosition(Vector3 position)
@@ -65,11 +81,23 @@ public class Player : Actor
     private IEnumerator AttackToTargetCo_(Monster monster)
     {
         yield return AttackToTargetCo(monster);
-        //if(monster.status == StatusType.Die)
-        //{
-        //    AddExp(monster.rewardExp);
-        //}
+        if (monster.status == StatusType.Die)
+        {
+            AddExp(monster.rewardExp);
+        }
         StageManager.GameState = GameStateType.SelectPlayer;
+    }
+
+    public int maxExp;
+    private void AddExp(int rewardExp)
+    {
+        // 경험치 추가.
+        exp.Value += rewardExp;
+
+        // 경험치가 최대 경험치 보다 클경우 레벨 증가.
+        //maxExp
+
+        // 레벨 증가할 경우, hp,mp회복, hp, mp증가
     }
 
     internal bool OnMoveable(Vector3 position, int maxDistance)

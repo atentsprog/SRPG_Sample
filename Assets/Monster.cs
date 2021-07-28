@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Monster : Actor
 {
+    public int rewardExp = 5;
     public static List<Monster> Monsters = new List<Monster>();
     new protected void Awake()
     {

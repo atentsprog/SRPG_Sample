@@ -32,6 +32,10 @@ public class ItemDropInfo
 {
     public int dropItemID;
     public float ratio;
+    public override string ToString()
+    {
+        return $"{dropItemID}, {ratio}";
+    }
 }
 
 [System.Serializable]

@@ -45,9 +45,9 @@ public class BlockInfo : MonoBehaviour
             case GameStateType.SelectToAttackTarget:  //이동후에 공격할 타겟을 선택. 공격할 타겟이 없다면 SelectPlayer로 변경
                 SelectToAttackTarget();
                 break;
-            case GameStateType.AttackToTarget:
-                AttackToTarget();
-                break;
+            //case GameStateType.AttackToTarget:
+            //    AttackToTarget();
+            //    break;
 
             case GameStateType.NotInit:
             case GameStateType.IngPlayerMove:
@@ -74,10 +74,10 @@ public class BlockInfo : MonoBehaviour
         //    Player.SelectedPlayer.OnTouch(transform.position);
     }
 
-    private void AttackToTarget()
-    {
-        throw new NotImplementedException();
-    }
+    //private void AttackToTarget()
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     /// <summary>
     /// 이동후에 공격할 타겟일 수 있는 블럭을 선택했음.
@@ -181,7 +181,7 @@ public class BlockInfo : MonoBehaviour
         }
     }
     static List<BlockInfo> highLightedMoveableArea = new List<BlockInfo>();
-    private void ClearMoveableArea()
+    public static void ClearMoveableArea()
     {
         highLightedMoveableArea.ForEach(x => x.ToChangeOriginalColor());
         highLightedMoveableArea.Clear();

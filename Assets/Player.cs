@@ -16,18 +16,28 @@ public class Player : Actor
         base.Awake();
         Players.Add(this);
 
+        InitLevelData();
     }
 
     private void InitLevelData()
     {
         exp = new SaveInt("exp" + ID);
         level = new SaveInt("level" + ID, 1);
-        var data = GlobalData.Instance.playerDataMap[level.Value];
-        maxExp = data.maxExp;
-        hp = data.hp;
-        mp = data.mp;
+        SetLevelData();
     }
 
+    private void SetLevelData()
+    {
+        var data = GlobalData.Instance.playerDataMap[level.Value];
+        maxExp = data.maxExp;
+        hp = maxHp = data.maxHp;
+        mp = maxMp = data.maxMp;
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            AddExp(5);
+    }
     new protected void OnDestroy()
     {
         base.OnDestroy();
@@ -44,7 +54,6 @@ public class Player : Actor
         //animator = GetComponentInChildren<Animator>();
         GroundManager.Instance.AddBlockInfo(transform.position, BlockType.Player, this);
 
-        InitLevelData();
     }
 
     internal void MoveToPosition(Vector3 position)
@@ -95,9 +104,17 @@ public class Player : Actor
         exp.Value += rewardExp;
 
         // 경험치가 최대 경험치 보다 클경우 레벨 증가.
-        //maxExp
+        if(exp.Value >= maxExp)
+        {
+            exp.Value = exp.Value - maxExp;
 
-        // 레벨 증가할 경우, hp,mp회복, hp, mp증가
+            //레벨업, 
+            level.Value++;
+            SetLevelData();
+
+            CenterNotifyUI.Instance
+                .Show($"Lv.{level}으로 증가했습니다");
+        }
     }
 
     internal bool OnMoveable(Vector3 position, int maxDistance)

@@ -48,6 +48,28 @@ public class StageManager : SingletonMonoBehavior<StageManager>
                 ContextMenuUI.Instance.Show(Input.mousePosition);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            QueryUI.Instance.Show("버튼 1개 내용", (string result) =>
+            {
+                print(result + "를 눌렀다");
+            }, "확인");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            QueryUI.Instance.Show("버튼 2개 내용", (string result) =>
+            {
+                print(result + "를 눌렀다");
+            }, "확인", "취소");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            QueryUI.Instance.Show("버튼 3개 내용", (string result) =>
+            {
+                print(result + "를 눌렀다");
+            }, "확인", "취소", "3번째 버튼");
+        }
     }
 
     internal void EndTurnPlayer()

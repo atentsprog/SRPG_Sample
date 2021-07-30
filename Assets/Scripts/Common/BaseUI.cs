@@ -319,7 +319,7 @@ where T : SingletonBase
         m_instance = null;
     }
 
-    private void DestroyChildObject()
+    protected void DestroyChildObject()
     {
         if (childObject == null)
             return;

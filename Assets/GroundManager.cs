@@ -104,4 +104,17 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         if (useDebugMode)
             blockInfoMap[pos].UpdateDebugInfo();
     }
+
+    internal BlockInfo GetBlockInfo(Vector3 position)
+    {
+        var intPos = position.ToVector2Int();
+        blockInfoMap.TryGetValue(intPos, out BlockInfo result);
+        return result;
+    }
+
+    internal void RemoveItemInfo(Vector3 position)
+    {
+        RemoveBlockInfo(position, BlockType.Item);
+        GetBlockInfo(position).DeleteItemInfo();
+    }
 }

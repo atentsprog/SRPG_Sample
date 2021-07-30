@@ -160,6 +160,12 @@ public class BlockInfo : MonoBehaviour
         }
     }
 
+    internal void DeleteItemInfo()
+    {
+        dropItemID = 0;
+        Destroy(dropItemGo);
+    }
+
     private void ShowMoveableArea(int moveDistance)
     {
         Quaternion rotate = Quaternion.Euler(0, 45, 0);

@@ -71,7 +71,6 @@ public class Player : Actor
         StopAllCoroutines();
         StartCoroutine(FindPathCo(goalPos));
     }
-
     internal bool CanAttackTarget(Actor enemy)
     {
         //같은팀을 공격대상으로 하지 않기
@@ -170,8 +169,44 @@ public class Player : Actor
         enemyExistPoint.ForEach( x => x.ToChangeOriginalColor());
         enemyExistPoint.Clear();
     }
+
+    [System.Serializable]
+    public class InventoryItemInfo
+    {
+        public int itemID;
+        public int count;
+    }
+
+    public List<InventoryItemInfo> haveItems = new List<InventoryItemInfo>();
     protected override void OnCompleteMove()
     {
+        //아이템 있다면 먹자. 지금 위치에 아이템 있다면 획득하자.
+        BlockInfo blockInfo = GroundManager.Instance.GetBlockInfo(transform.position);
+        if(blockInfo.dropItemID != 0)
+        {
+            int addItemID = blockInfo.dropItemID;
+            int addCount = 1;
+
+            //인벤토리에서 증가.
+            var existItem = haveItems.Find(x => x.itemID == addItemID);
+            if (existItem != null)
+            {
+                existItem.count += addCount;
+            }
+            else
+            {
+                InventoryItemInfo addItem = new InventoryItemInfo() { itemID = addItemID };
+                haveItems.Add(addItem);
+            }
+
+            // 획득소식 UI에 표시.
+            string iconName = GlobalData.Instance.itemDataMap[addItemID].iconName;
+            NotifyUI.Instance.Show($"{iconName}을 획득했습니다");
+
+            // 블럭에서 아이템 정보 삭제
+            GroundManager.Instance.RemoveItemInfo(transform.position);
+        }
+
         bool existAttackTarget = ShowAttackableArea();
         if (existAttackTarget)
             StageManager.GameState = GameStateType.SelectToAttackTarget;

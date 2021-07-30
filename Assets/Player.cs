@@ -10,7 +10,28 @@ public class Player : Actor
 {
     public static List<Player> Players = new List<Player>();
     public int ID;
-    public SaveInt exp, level;
+    public int exp
+    {
+        set { data.exp = value; }
+        get { return data.exp; }
+    }
+
+    public int level
+    {
+        set { data.level = value; }
+        get { return data.level; }
+    }
+
+    private void InitLevelData()
+    {
+        //exp = new SaveInt("exp" + ID);
+        //level = new SaveInt("level" + ID, 1);
+        var log = PlayerPrefs.GetString(PlayerDataKey);
+        print(log);
+        data = JsonUtility.FromJson<PlayerData>(log);
+
+        SetLevelData();
+    }
 
     new protected void Awake()
     {
@@ -19,20 +40,12 @@ public class Player : Actor
 
         InitLevelData();
     }
-
-    private void InitLevelData()
-    {
-        exp = new SaveInt("exp" + ID);
-        level = new SaveInt("level" + ID, 1);
-        SetLevelData();
-    }
-
     private void SetLevelData()
     {
-        if (GlobalData.Instance.playerDataMap.ContainsKey(level.Value)== false)
+        if (GlobalData.Instance.playerDataMap.ContainsKey(level)== false)
             Debug.LogError($"{level}레벨 정보가 없습니다");
 
-        var data = GlobalData.Instance.playerDataMap[level.Value];
+        var data = GlobalData.Instance.playerDataMap[level];
         maxExp = data.maxExp;
         hp = maxHp = data.maxHp;
         mp = maxMp = data.maxMp;
@@ -46,8 +59,24 @@ public class Player : Actor
     {
         base.OnDestroy();
         Players.Remove(this);
+
+        SaveData();
     }
 
+    void SaveData()
+    {
+        string json = JsonUtility.ToJson(data);
+
+        try
+        {
+            PlayerPrefs.SetString(PlayerDataKey, json);
+            Debug.Log("json:" + json);
+        }
+        catch (System.Exception err)
+        {
+            Debug.Log("Got: " + err);
+        }
+    }
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Player; }
 
     static public Player SelectedPlayer;
@@ -129,15 +158,15 @@ public class Player : Actor
     private void AddExp(int rewardExp)
     {
         // 경험치 추가.
-        exp.Value += rewardExp;
+        exp += rewardExp;
 
         // 경험치가 최대 경험치 보다 클경우 레벨 증가.
-        if(exp.Value >= maxExp)
+        if(exp >= maxExp)
         {
-            exp.Value = exp.Value - maxExp;
+            exp = exp - maxExp;
 
             //레벨업, 
-            level.Value++;
+            level++;
             SetLevelData();
 
             CenterNotifyUI.Instance
@@ -177,6 +206,32 @@ public class Player : Actor
             StageManager.GameState = GameStateType.SelectToAttackTarget;
         else
             StageManager.GameState = GameStateType.SelectPlayer;
+
+        // 도착한 지역에 아이템이 있다면 획득하자.
+        var intPos = transform.position.ToVector2Int();
+        // 어떤 아이템이 있는가?
+        int itemID = GroundManager.Instance.blockInfoMap[intPos].dropItemID;
+        if (itemID > 0)
+        {
+            // 아이템 획득하기.
+            AddItem(itemID);
+
+            // 땅에서는 아이템 삭제하기.
+            GroundManager.Instance.RemoveItem(transform.position);
+        }
+    }
+    [System.Serializable]
+    public class PlayerData
+    {
+        public List<int> haveItem = new List<int>();
+        public int exp;
+        public int level;
+    }
+    public PlayerData data;
+    string PlayerDataKey => "PlayerData" + ID;
+    private void AddItem(int itemID)
+    {
+        data.haveItem.Add(itemID);
     }
 
     public List<BlockInfo> enemyExistPoint = new List<BlockInfo>();

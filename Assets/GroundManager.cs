@@ -68,11 +68,13 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         dropItemGo.GetComponentInChildren<SpriteRenderer>().sprite =(Sprite)sprite;
         dropItemGo.transform.position = position;
         Vector2Int pos = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-        blockInfoMap[pos].blockType |= addBlockType;
-        blockInfoMap[pos].dropItemID = dropItem.ID;
-        blockInfoMap[pos].dropItemGo = dropItemGo;
+
+        var blockInfo = blockInfoMap[pos];
+        blockInfo.blockType |= addBlockType;
+        blockInfo.dropItemID = dropItem.ID;
+        blockInfo.dropItemGo = dropItemGo;
         if (useDebugMode)
-            blockInfoMap[pos].UpdateDebugInfo();
+            blockInfo.UpdateDebugInfo();
     }
 
     public void AddBlockInfo(Vector3 position, BlockType addBlockType, Actor actor)
@@ -103,5 +105,13 @@ public class GroundManager : SingletonMonoBehavior<GroundManager>
         blockInfoMap[pos].actor = null;
         if (useDebugMode)
             blockInfoMap[pos].UpdateDebugInfo();
+    }
+
+    internal void RemoveItem(Vector3 position)
+    {
+        var blockInfo = blockInfoMap[position.ToVector2Int()];
+        blockInfo.dropItemID = 0;
+        Destroy(blockInfo.dropItemGo);
+        RemoveBlockInfo(position, BlockType.Item);
     }
 }

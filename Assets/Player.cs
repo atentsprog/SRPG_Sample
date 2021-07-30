@@ -24,7 +24,25 @@ public class Player : Actor
     {
         exp = new SaveInt("exp" + ID);
         level = new SaveInt("level" + ID, 1);
+
+        data = JsonUtility.FromJson<PlayerData>(PlayerPrefs.GetString("PlayerData" + ID));
         SetLevelData();
+    }
+
+    [ContextMenu("SaveData")]
+    void SaveData()
+    {
+        string json = JsonUtility.ToJson(data);
+
+        try
+        {
+            PlayerPrefs.SetString("PlayerData" + ID, json);
+            Debug.Log("json:" + json);
+        }
+        catch (System.Exception err)
+        {
+            Debug.Log("Exception Got: " + err);
+        }
     }
 
     private void SetLevelData()
@@ -46,6 +64,7 @@ public class Player : Actor
     {
         base.OnDestroy();
         Players.Remove(this);
+        SaveData();
     }
 
     public override ActorTypeEnum ActorType { get => ActorTypeEnum.Player; }
@@ -177,7 +196,13 @@ public class Player : Actor
         public int count;
     }
 
-    public List<InventoryItemInfo> haveItems = new List<InventoryItemInfo>();
+    [System.Serializable]
+    public class PlayerData
+    {
+        public List<InventoryItemInfo> haveItems = new List<InventoryItemInfo>();
+    }
+
+    public PlayerData data = new PlayerData();
     protected override void OnCompleteMove()
     {
         //아이템 있다면 먹자. 지금 위치에 아이템 있다면 획득하자.
@@ -188,7 +213,7 @@ public class Player : Actor
             int addCount = 1;
 
             //인벤토리에서 증가.
-            var existItem = haveItems.Find(x => x.itemID == addItemID);
+            var existItem = data.haveItems.Find(x => x.itemID == addItemID);
             if (existItem != null)
             {
                 existItem.count += addCount;
@@ -196,7 +221,7 @@ public class Player : Actor
             else
             {
                 InventoryItemInfo addItem = new InventoryItemInfo() { itemID = addItemID };
-                haveItems.Add(addItem);
+                data.haveItems.Add(addItem);
             }
 
             // 획득소식 UI에 표시.

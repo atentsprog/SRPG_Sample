@@ -15,11 +15,12 @@ public class PlayerLevelData
 [System.Serializable]
 public class ItemData
 {
+    public string toString;
     public int ID;
+    public string iconName;
     public int allowlevel;
     public int sellPrice;
     public int buyPrice;
-    public string iconName;
     public override string ToString()
     {
         return $"{ID}, {iconName}, sellPrice:{sellPrice}";
@@ -60,6 +61,13 @@ public class GlobalData : SingletonMonoBehavior<GlobalData>
         playerDataMap = playerDatas.ToDictionary(x => x.level);
         itemDataMap = itemDatas.ToDictionary(x => x.ID);
         dropItemGroupDataMap = dropItemGroupDatas.ToDictionary(x => x.ID);
+    }
+
+
+    [ContextMenu("UpdateDebugText")]
+    void UpdateDebugText()
+    {
+        itemDatas.ForEach(X => X.toString = X.ToString());
     }
 
     [ContextMenu("InitPlayerData")]

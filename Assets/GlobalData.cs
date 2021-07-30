@@ -61,6 +61,10 @@ public class GlobalData : SingletonMonoBehavior<GlobalData>
         playerDataMap = playerDatas.ToDictionary(x => x.level);
         itemDataMap = itemDatas.ToDictionary(x => x.ID);
         dropItemGroupDataMap = dropItemGroupDatas.ToDictionary(x => x.ID);
+
+#if UNITY_EDITOR
+        UpdateDebugText();
+#endif
     }
 
 
@@ -68,6 +72,12 @@ public class GlobalData : SingletonMonoBehavior<GlobalData>
     void UpdateDebugText()
     {
         itemDatas.ForEach(X => X.toString = X.ToString());
+    }
+
+    [ContextMenu("RemoveDebugText")]
+    void RemoveDebugText()
+    {
+        itemDatas.ForEach(X => X.toString = null);
     }
 
     [ContextMenu("InitPlayerData")]

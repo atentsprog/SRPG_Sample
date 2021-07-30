@@ -29,6 +29,8 @@ public class Player : Actor
         var log = PlayerPrefs.GetString(PlayerDataKey);
         print(log);
         data = JsonUtility.FromJson<PlayerData>(log);
+        if (data == null)
+            data = new PlayerData();
 
         SetLevelData();
     }
@@ -167,6 +169,13 @@ public class Player : Actor
 
             //레벨업, 
             level++;
+            int maxLevel = GlobalData.Instance.playerDataMap.Last().Key;
+            if (level > maxLevel)
+            {
+                CenterNotifyUI.Instance.Show(
+                    $"최대레벨({maxLevel})보다 클 수 없습니다");
+                level = maxLevel;
+            }
             SetLevelData();
 
             CenterNotifyUI.Instance
@@ -223,6 +232,10 @@ public class Player : Actor
     [System.Serializable]
     public class PlayerData
     {
+        public PlayerData()
+        {
+            level = 1;
+        }
         public List<int> haveItem = new List<int>();
         public int exp;
         public int level;

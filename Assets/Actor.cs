@@ -180,6 +180,10 @@ public class Actor : MonoBehaviour
                 Vector3 playerNewPos = new Vector3(item.x, myPosVector3.y, item.y);
                 myTr.LookAt(playerNewPos);
                 myTr.DOMove(playerNewPos, moveTimePerUnit);
+
+                var newPosBlock = GroundManager.Instance.blockInfoMap[playerNewPos.ToVector2Int()];
+                newPosBlock.transform.DOLocalMoveY(-0.2f, 0.5f).SetLoops(2, LoopType.Yoyo).SetEase(Ease.InBounce);
+
                 yield return new WaitForSeconds(moveTimePerUnit);
             }
             PlayAnimation("Idle");

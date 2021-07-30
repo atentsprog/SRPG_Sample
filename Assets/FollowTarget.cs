@@ -19,17 +19,18 @@ public class FollowTarget : SingletonMonoBehavior<FollowTarget>
         }
     }
 
-    // 다른 컴포넌트에 Pan기능때문에 사용안함.
-    //void LateUpdate()
-    //{
-    //    if (target == null)
-    //        return;
+    //다른 컴포넌트에 Pan기능때문에 사용안함. -> 타겟이 있을때는 
 
-    //    var newPos = target.position + offset;
+   void LateUpdate()
+    {
+        if (target == null)
+            return;
 
-    //    newPos.x = transform.position.x;
-    //    newPos.y = transform.position.y;
+        var newPos = target.position + offset;
 
-    //    transform.position = newPos;
-    //}
+        newPos.x = transform.position.x;
+        newPos.y = transform.position.y;
+
+        transform.position = newPos;
+    }
 }

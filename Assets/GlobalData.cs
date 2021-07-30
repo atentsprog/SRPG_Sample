@@ -65,7 +65,7 @@ public class GlobalData : SingletonMonoBehavior<GlobalData>
     [ContextMenu("InitPlayerData")]
     void InitPlayerData()
     {
-        for (int i = playerDatas.Count; i < 60; i++)
+        for (int i = playerDatas.Count; i < 100; i++)
         {
             var prev = playerDatas[i - 1];
             playerDatas.Add(new PlayerLevelData()

@@ -10,7 +10,16 @@ public class Player : Actor
 {
     public static List<Player> Players = new List<Player>();
     public int ID;
-    public SaveInt exp, level;
+    public int exp
+    {
+        get { return data.exp; }
+        set { data.exp = value; }
+    }
+    public int level
+    {
+        get { return data.level; }
+        set { data.level = value; }
+    }
 
     new protected void Awake()
     {
@@ -22,8 +31,8 @@ public class Player : Actor
 
     private void InitLevelData()
     {
-        exp = new SaveInt("exp" + ID);
-        level = new SaveInt("level" + ID, 1);
+        //exp = new SaveInt("exp" + ID);
+        //level = new SaveInt("level" + ID, 1);
 
         data = JsonUtility.FromJson<PlayerData>(PlayerPrefs.GetString("PlayerData" + ID));
         SetLevelData();
@@ -47,10 +56,10 @@ public class Player : Actor
 
     private void SetLevelData()
     {
-        if (GlobalData.Instance.playerDataMap.ContainsKey(level.Value)== false)
+        if (GlobalData.Instance.playerDataMap.ContainsKey(level)== false)
             Debug.LogError($"{level}레벨 정보가 없습니다");
 
-        var data = GlobalData.Instance.playerDataMap[level.Value];
+        var data = GlobalData.Instance.playerDataMap[level];
         maxExp = data.maxExp;
         hp = maxHp = data.maxHp;
         mp = maxMp = data.maxMp;
@@ -147,15 +156,15 @@ public class Player : Actor
     private void AddExp(int rewardExp)
     {
         // 경험치 추가.
-        exp.Value += rewardExp;
+        exp += rewardExp;
 
         // 경험치가 최대 경험치 보다 클경우 레벨 증가.
-        if(exp.Value >= maxExp)
+        if(exp >= maxExp)
         {
-            exp.Value = exp.Value - maxExp;
+            exp = exp - maxExp;
 
             //레벨업, 
-            level.Value++;
+            level++;
             SetLevelData();
 
             CenterNotifyUI.Instance
@@ -199,6 +208,7 @@ public class Player : Actor
     [System.Serializable]
     public class PlayerData
     {
+        public int exp, level;
         public List<InventoryItemInfo> haveItems = new List<InventoryItemInfo>();
     }
 

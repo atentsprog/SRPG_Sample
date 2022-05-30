@@ -188,7 +188,7 @@ public class Player : Actor
         Vector2Int goalPos = position.ToVector2Int();
         Vector2Int playerPos = transform.position.ToVector2Int();
         var map = GroundManager.Instance.blockInfoMap;
-        var path = PathFinding2D.find4(playerPos, goalPos, (Dictionary<Vector2Int, BlockInfo>)map, passableValues);
+        var path = PathFinding2D.Find(playerPos, goalPos, map, passableValues);
 
         if (path.Count == 0 || path.Count > maxDistance + 1)
             return false;

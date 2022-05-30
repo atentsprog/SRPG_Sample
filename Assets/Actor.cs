@@ -148,7 +148,7 @@ public class Actor : MonoBehaviour
         Vector2Int myPos = myTr.position.ToVector2Int();
         Vector3 myPosVector3 = myTr.position;
         var map = GroundManager.Instance.blockInfoMap;
-        List<Vector2Int> path = PathFinding2D.find4(myPos, destPos, map, passableValues);
+        List<Vector2Int> path = PathFinding2D.Find(myPos, destPos, map, passableValues);
         if (path.Count == 0)
             Debug.Log("길이 없다");
         else
